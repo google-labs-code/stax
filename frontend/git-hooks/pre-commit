@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Run lint check
+npm run lint:check
+LINT_RESULT=$?
+if [ $LINT_RESULT -ne 0 ]; then
+  echo "\n❌ Lint errors found. Commit aborted."
+  exit 1
+fi
+
+# Run tests
+npm run test
+TEST_RESULT=$?
+if [ $TEST_RESULT -ne 0 ]; then
+  echo "\n❌ Tests failed. Commit aborted."
+  exit 1
+fi
+
+echo "\n✅ All checks passed. Proceeding with commit."
+exit 0

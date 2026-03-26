@@ -1,0 +1,736 @@
+/**
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import "@mantine/core/styles.layer.css";
+@import "@mantine/charts/styles.layer.css";
+@import "@mantine/dates/styles.layer.css";
+@import "@mantine/notifications/styles.layer.css";
+@import "@mantine/tiptap/styles.layer.css";
+@import "mantine-react-table/styles.css";
+
+/* @layer tailwind {
+} */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * 
+ * Please refer to
+ * [Tailwind Directives](https://tailwindcss.com/docs/functions-and-directives) before
+ * reading this further.
+ * 
+ * Color Guidelines:
+ *
+ * 1. Color variables should use RGB numbers as values. Other standard CSS formats will
+ *    not work.
+ *
+ *    Valid and invalid examples:
+ *    ✅ --color-background: 200, 150, 120
+ *    ❌ --color-background: rgb(200, 150, 120)
+ *    ❌ --color-background: rgba(200, 150, 120, 1)
+ *    ❌ --color-background: #C89678
+ *    ❌ --color-background: #C89678FF
+ *
+ * 2. Theme classes must be defined within the `base` layer. The default layer/theme class
+ *    is `:root`.
+ *
+ *    @layer base {
+ *      :root { ... }
+ *      .neon-theme { ... }
+ *    }
+ *
+ * 3. Each variable must have a value defined in all theme classes. Additionally, default
+ *    value of the variables must be set in `:root` layer.
+ *
+ */
+
+@layer base {
+  :root {
+    /****************************** Palette Colors *************************************/
+
+    /* Brand */
+    --color-brand-50: 235, 239, 255;
+    --color-brand-100: 219, 225, 255;
+    --color-brand-200: 190, 200, 255;
+    --color-brand-300: 151, 163, 255;
+    --color-brand-400: 110, 112, 255;
+    --color-brand-500: 95, 91, 255;
+    --color-brand-600: 80, 52, 255;
+    --color-brand-700: 63, 32, 226;
+    --color-brand-800: 50, 29, 182;
+    --color-brand-900: 45, 32, 143;
+    --color-brand-950: 28, 19, 83;
+
+    /* Supporting Green */
+    --color-supporting-green-50: 234, 255, 247;
+    --color-supporting-green-100: 205, 254, 234;
+    --color-supporting-green-200: 160, 250, 218;
+    --color-supporting-green-300: 99, 242, 199;
+    --color-supporting-green-400: 37, 226, 176;
+    --color-supporting-green-500: 3, 200, 154;
+    --color-supporting-green-600: 0, 164, 127;
+    --color-supporting-green-700: 0, 131, 105;
+    --color-supporting-green-800: 0, 103, 84;
+    --color-supporting-green-900: 0, 85, 71;
+    --color-supporting-green-950: 0, 48, 41;
+
+    /* Supporting Yellow */
+    --color-supporting-yellow-50: 255, 251, 235;
+    --color-supporting-yellow-100: 255, 243, 198;
+    --color-supporting-yellow-200: 255, 229, 136;
+    --color-supporting-yellow-300: 255, 210, 74;
+    --color-supporting-yellow-400: 249, 156, 7;
+    --color-supporting-yellow-500: 249, 156, 7;
+    --color-supporting-yellow-600: 221, 116, 2;
+    --color-supporting-yellow-700: 183, 81, 6;
+    --color-supporting-yellow-800: 122, 50, 13;
+    --color-supporting-yellow-900: 122, 50, 13;
+    --color-supporting-yellow-950: 70, 25, 2;
+
+    /* Supporting Red */
+    --color-supporting-red-50: 255, 241, 242;
+    --color-supporting-red-100: 255, 227, 230;
+    --color-supporting-red-200: 255, 204, 210;
+    --color-supporting-red-300: 255, 162, 175;
+    --color-supporting-red-400: 254, 110, 132;
+    --color-supporting-red-500: 248, 68, 100;
+    --color-supporting-red-600: 229, 25, 71;
+    --color-supporting-red-700: 193, 15, 59;
+    --color-supporting-red-800: 138, 17, 55;
+    --color-supporting-red-900: 138, 17, 55;
+    --color-supporting-red-950: 77, 4, 24;
+
+    /* Neutrals */
+    --color-neutrals-50: 255, 255, 255;
+    --color-neutrals-100: 246, 248, 252;
+    --color-neutrals-200: 241, 244, 249;
+    --color-neutrals-300: 226, 232, 240;
+    --color-neutrals-400: 203, 212, 225;
+    --color-neutrals-500: 148, 163, 184;
+    --color-neutrals-600: 100, 116, 139;
+    --color-neutrals-700: 71, 85, 105;
+    --color-neutrals-800: 39, 54, 75;
+    --color-neutrals-900: 30, 42, 59;
+    --color-neutrals-950: 17, 15, 34;
+
+    /******************************* Theme Colors **************************************/
+
+    /* Text variants */
+    --color-text-primary: var(--color-neutrals-900);
+    --color-text-inverted: var(--color-neutrals-50);
+    --color-brand: #5f5bff;
+    --color-resting: #aeaeb8;
+
+    --color-green: #008369;
+    --color-dark-green: #019a76;
+    --color-medium-green: #c8e7e0;
+    --color-light-green: #cdfeea;
+    --color-disabled: #dbdbe1;
+    --color-border: #e2e8f0;
+    --color-light-blue: #dbe1ff;
+    --color-secondary: #737284;
+    --color-secondary-dark: #2a2945;
+    --color-light-silver: #e8e7ed;
+    --color-very-light-silver: #f6f8fc;
+    --color-very-light-red: #ffdada;
+    --color-dark-red: #690005;
+    --color-white: #ffffff;
+    --color-red: #c10f3b;
+    --color-orange: #f99c07;
+    --color-yellow: #ffd24a;
+    --color-blue: #6e70ff;
+    --color-purple: #b66eff;
+    --color-pink: #f84464;
+    --color-grey: #8595ab;
+    --color-dark-blue: #232157;
+    --color-black: #000000;
+    --color-lime: #03c89a;
+    --color-violet: #5f5bff;
+
+    --color-grey-bg: #eff1f4;
+    --color-blue-bg: #e2efff;
+    --color-violet-bg: #dbe1ff;
+    --color-purple-bg: #f0e2ff;
+    --color-red-bg: #ffccd2;
+    --color-pink-bg: #ffe3e6;
+    --color-orange-bg: #fff3c6;
+    --color-green-bg: #a0fada;
+    --color-lime-bg: #cdfeea;
+    --color-secondary-bg: #a8a8b6;
+
+    /* Accent colors */
+    --color-accent-green: var(--color-supporting-green-500);
+    --color-accent-yellow: var(--color-supporting-yellow-500);
+    --color-accent-red: var(--color-supporting-red-500);
+
+    /* Surface/background colors */
+    --color-background-primary: var(--color-neutrals-100);
+  }
+
+  p,
+  span {
+    @apply text-body-14;
+  }
+
+  h1 {
+    @apply text-title-32;
+    font-family: "Google Sans";
+  }
+
+  h2 {
+    @apply text-title-28;
+    font-family: "Google Sans";
+  }
+
+  h3 {
+    @apply text-title-24;
+    font-family: "Google Sans";
+  }
+
+  h4 {
+    @apply text-title-20;
+  }
+
+  h5 {
+    @apply text-title-16;
+  }
+
+  h6 {
+    @apply text-title-14;
+  }
+}
+
+@layer tailwindPreflight {
+  blockquote,
+  dl,
+  dd,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  hr,
+  figure,
+  p,
+  pre {
+    margin: 0;
+  }
+
+  ol,
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    display: block;
+    vertical-align: middle;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /**
+   *
+   * Source:
+   * https://github.com/sindresorhus/modern-normalize/blob/main/modern-normalize.css
+   *
+   */
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0; /* Remove the margin in all browsers. */
+  }
+
+  /**
+  1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+  2. Correct table border color inheritance in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+  */
+
+  table {
+    text-indent: 0; /* 1 */
+    border-color: inherit; /* 2 */
+  }
+
+  /**
+  Remove the inheritance of text transform in Edge and Firefox.
+  */
+
+  button,
+  select {
+    text-transform: none;
+  }
+
+  /**
+  Correct the inability to style clickable types in iOS and Safari.
+  */
+
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    -webkit-appearance: button;
+  }
+
+  /**
+  Remove the inner border and padding in Firefox.
+  */
+
+  ::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+  }
+
+  /**
+  Restore the focus styles unset by the previous rule.
+  */
+
+  :-moz-focusring {
+    outline: 1px dotted ButtonText;
+  }
+
+  /**
+  Restore the focus styles unset by the previous rule.
+  */
+
+  :-moz-focusring {
+    outline: 1px dotted ButtonText;
+  }
+
+  /**
+  Remove the additional ':invalid' styles in Firefox.
+  See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737
+  */
+
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+
+  /**
+  Remove the padding so developers are not caught out when they zero out 'fieldset' elements in all browsers.
+  */
+
+  legend {
+    padding: 0;
+  }
+
+  /**
+  Add the correct vertical alignment in Chrome and Firefox.
+  */
+
+  progress {
+    vertical-align: baseline;
+  }
+
+  /**
+  Correct the cursor style of increment and decrement buttons in Safari.
+  */
+
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    height: auto;
+  }
+
+  /**
+  1. Correct the odd appearance in Chrome and Safari.
+  2. Correct the outline style in Safari.
+  */
+
+  [type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    outline-offset: -2px; /* 2 */
+  }
+
+  /**
+  Remove the inner padding in Chrome and Safari on macOS.
+  */
+
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+
+  /**
+  1. Correct the inability to style clickable types in iOS and Safari.
+  2. Change font properties to 'inherit' in Safari.
+  */
+
+  ::-webkit-file-upload-button {
+    -webkit-appearance: button; /* 1 */
+    font: inherit; /* 2 */
+  }
+
+  /*
+  Interactive
+  ===========
+  */
+
+  /*
+  Add the correct display in Chrome and Safari.
+  */
+
+  summary {
+    display: list-item;
+  }
+
+  .mrt-table-pagination {
+    gap: 5px !important;
+
+    p {
+      font-size: 12px !important;
+      color: var(--color-secondary-dark) !important;
+    }
+
+    .mantine-Group-root {
+      gap: 0;
+
+      button {
+        background: none !important;
+
+        &.mantine-active {
+          color: var(--color-secondary);
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+}
+
+@layer defaults {
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+.mantine-ActionIcon-root,
+.mantine-CloseButton-root {
+  color: var(--color-neutrals-90) !important;
+  cursor: pointer !important;
+
+  :hover {
+    background-color: rgb(218, 224, 236) !important;
+    border-radius: 50% !important;
+  }
+}
+
+.mantine-Modal-header {
+  display: flex;
+  align-items: flex-start;
+}
+
+#tos-welcome-content {
+  ul {
+    list-style-type: disc;
+    list-style-position: outside;
+    padding-left: 1.5rem;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  ul li {
+    display: list-item;
+  }
+
+  p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  a {
+    color: rgb(var(--color-brand-500));
+  }
+}
+
+.chat-markup-li {
+  p {
+    display: inline;
+  }
+}
+
+.no-shadow-column {
+  &:before {
+    box-shadow: none !important;
+  }
+}
+
+.mrt-table {
+  th {
+    min-width: 200px !important;
+    max-width: 100% !important;
+
+    .mrt-table-head-cell-resize-handle {
+      display: none;
+      height: 40px;
+      width: 3px;
+      background-color: #5f5bff;
+      right: 2px;
+      border-radius: 0;
+    }
+
+    &:hover {
+      .mrt-table-head-cell-resize-handle {
+        display: block;
+      }
+    }
+
+    .mrt-table-head-cell-labels,
+    .mrt-table-head-cell-content-wrapper,
+    p {
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      display: block !important;
+      color: var(--color-secondary) !important;
+    }
+  }
+
+  .row-select-column,
+  .actions-column {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+
+    .mrt-table-head-cell-labels {
+      width: 20px !important;
+      min-width: 20px !important;
+    }
+
+    input {
+      border: 2px solid var(--color-border) !important;
+    }
+  }
+
+  tr {
+    td {
+      min-width: 200px !important;
+      max-width: 100% !important;
+    }
+
+    &.selected-row {
+      background-color: var(--color-light-blue) !important;
+
+      td {
+        background-color: var(--color-light-blue) !important;
+        border: 1px solid var(--color-white) !important;
+      }
+    }
+  }
+
+  .col-inference_latency {
+    min-width: 100px !important;
+  }
+
+  .col-input {
+    min-width: 259px !important;
+  }
+
+  .col-output_tokens {
+    min-width: 141px !important;
+  }
+
+  .col-total_tokens {
+    min-width: 130px !important;
+  }
+
+  .col-human_evaluation {
+    min-width: 170px !important;
+  }
+
+  .single-eval-column {
+    min-width: 150px !important;
+  }
+
+  .actions-column {
+    box-shadow: -4px 0 8px 0 rgba(231, 231, 231, 0.5) !important;
+  }
+
+  .col-side_by_side_eval {
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+
+    .mrt-table-head-cell-content-actions {
+      display: none !important;
+    }
+  }
+}
+
+.projects-table {
+  background-color: transparent !important;
+
+  th {
+    &.col-actions {
+      background-color: var(--color-very-light-silver) !important;
+    }
+  }
+
+  tbody {
+    background-color: var(--color-very-light-silver) !important;
+
+    tr {
+      margin-bottom: 8px !important;
+      border-radius: 8px !important;
+      border: 1px solid var(--color-border) !important;
+
+      td {
+        height: 40px !important;
+
+        &.col-actions {
+          background-color: var(--color-white) !important;
+        }
+      }
+    }
+  }
+
+  tfoot {
+    display: none !important;
+  }
+
+  .col-actions {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    background-color: transparent !important;
+
+    .mrt-table-head-cell-labels {
+      width: 20px !important;
+      min-width: 20px !important;
+    }
+
+    &:before {
+      box-shadow: none !important;
+      border: 0 !important;
+      background-color: transparent !important;
+    }
+  }
+}
+
+.side-by-side-table {
+  .col-inference_latency,
+  .col-output_tokens,
+  .col-total_tokens {
+    min-width: 160px !important;
+  }
+
+  td {
+    height: 152px !important;
+    align-items: flex-start !important;
+
+    &.col-side_by_side_eval {
+      padding: 8px 12px !important;
+    }
+    &.col-side_by_side_model_A,
+    &.col-side_by_side_model_B,
+    &.col-inference_latency,
+    &.col-output_tokens,
+    &.col-total_tokens,
+    &.single-eval-column {
+      padding: 0;
+    }
+  }
+
+  th {
+    &.col-side_by_side_eval {
+      .mrt-table-head-cell-content {
+        justify-content: center !important;
+      }
+    }
+
+    &.col-side_by_side_model_A,
+    &.col-side_by_side_model_B {
+      .mrt-table-head-cell-content-actions {
+        display: none !important;
+      }
+    }
+  }
+}
+
+.tag-cell-with-tags {
+  &:hover {
+    .tag-cell-plus-button {
+      display: block;
+    }
+  }
+}
+.cm-editor {
+  outline: none !important;
+}
+
+.mrt-table
+  tbody
+  tr:not([data-selected], [data-row-pinned])
+  td[data-column-pinned]:before,
+table[class*="MRT_Table"]
+  tbody
+  tr:not([data-selected], [data-row-pinned])
+  td[data-column-pinned]:before,
+div[class*="MRT_"]
+  table
+  tbody
+  tr:not([data-selected], [data-row-pinned])
+  td[data-column-pinned]:before {
+  background-color: var(--color-white) !important;
+}
+
+.side-by-side-table tr.add-row-element td,
+.side-by-side-table tr[data-add-row="true"] td {
+  height: 40px !important;
+}
+
+.side-by-side-table td.add-row-cell,
+.side-by-side-table tr[data-add-row="true"] td[class*="mrt-row-select"] {
+  height: 40px !important;
+}
+
+.playground-scroll-area-viewport {
+  > div {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+}
+
+.playground-scroll-area-viewport-expanded {
+  height: 52px !important;
+  overflow: hidden !important;
+
+  > div {
+    height: 52px !important;
+    overflow: hidden !important;
+  }
+}

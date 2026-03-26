@@ -1,0 +1,170 @@
+/**
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.mantine-SegmentedControl-control::before {
+  content: none;
+  display: none;
+}
+
+.mantine-Tabs-tab[data-active] {
+  color: var(--color-secondary-dark);
+  font-weight: bold;
+  border-bottom: 3px solid var(--color-brand);
+
+  :hover {
+    border-bottom: 3px;
+  }
+}
+
+figure {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+svg > rect {
+  rx: 50%;
+  ry: 50%;
+}
+
+svg > text:last-child {
+  display: none;
+}
+
+.chart [fill="#4269d0"] {
+  fill: var(--color-brand);
+}
+.chart [stroke="#4269d0"] {
+  stroke: var(--color-brand);
+}
+
+.chart [fill="#efb118"] {
+  fill: var(--color-orange);
+}
+.chart [stroke="#efb118"] {
+  stroke: var(--color-orange);
+}
+
+.stackedBarChart [fill="#4269d0"] {
+  fill: var(--color-brand);
+}
+.stackedBarChart [fill="#efb118"] {
+  fill: var(--color-brand);
+  opacity: 0.3;
+}
+.stackedBarChart [fill="#ff725c"] {
+  fill: var(--color-orange);
+}
+.stackedBarChart [fill="#6cc5b0"] {
+  fill: var(--color-orange);
+  opacity: 0.3;
+}
+
+text {
+  font-family: var(--font-google-sans-text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.1;
+  color: var(--color-resting);
+}
+
+tspan {
+  font-family: var(--font-google-sans-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.1;
+  color: var(--color-resting);
+}
+
+figure [class$="swatch"] {
+  font-family: var(--font-google-sans-text);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-resting);
+  margin-top: 40px;
+}
+
+.chart-with-large-y-labels text {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.freeze-chart {
+  padding: 0 12px 12px;
+
+  .custom-legend-swatch {
+    overflow: visible !important;
+    padding-bottom: 20px;
+
+    svg {
+      padding-top: 10px !important;
+      height: 32px;
+      overflow: visible !important;
+    }
+  }
+
+  .pdf-svg-transform {
+    svg {
+      padding-top: 5px !important;
+      height: 40px;
+      overflow: visible !important;
+    }
+  }
+
+  .custom-z-index-dot {
+    z-index: 100;
+  }
+
+  .pdf-tabs-transform {
+    all: unset;
+    display: flex;
+    justify-content: flex-start;
+
+    .mantine-SegmentedControl-control:not([data-active="true"]) {
+      display: none;
+    }
+
+    .mantine-SegmentedControl-control[data-active="true"] {
+      color: var(--color-secondary-dark);
+      font-weight: bold;
+    }
+
+    .mantine-SegmentedControl-indicator {
+      display: none;
+    }
+
+    .mantine-SegmentedControl-label {
+      display: flex;
+      padding-bottom: 16px;
+      font-size: 14px;
+      color: var(--color-black);
+    }
+
+    .mantine-SegmentedControl-input:focus {
+      outline: none;
+    }
+  }
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,28 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js
+/.next
+/out
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+eslint.config.mjs
+
+# playwright
+/playwright-report
+/jest-unit-coverage
+/jest-integration-coverage
+
+# VSCode
+.vscode/
+.DS_Store
+public/.DS_Store
+/coverage
+.DS_Store
