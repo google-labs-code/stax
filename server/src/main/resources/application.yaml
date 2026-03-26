@@ -1,0 +1,111 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+spring:
+  profiles:
+    active: ${PROFILE_ACTIVE} # replace this value ${PROFILE_ACTIVE} with value dev if you are in a development environment
+  application:
+    name: spring-security
+  jpa:
+    # Provide database platform that is being used
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 80
+      maxLifeTime: 600000  # 10 minutes wait time
+  cloud:
+    gcp:
+      sql:
+        enabled: false
+      projectId: ${GCP_PROJECT_ID}
+  liquibase:
+    enabled: true
+    change-log: classpath:/liquibase/changelog-main.yaml
+  data:
+    redis:
+      host: ${REDIS_URL:none}
+      port: ${REDIS_PORT:6379}
+
+llm-providers:
+  retry:
+    max-attempts: 3
+    initial-interval: 1000
+    multiplier: 2.0
+    max-interval: 10000
+    include-status-codes: 429,500,502,503,504
+    exclude-status-codes: 400,401,403,404,405
+
+monitoring:
+  schedule:
+    enabled: true
+    cron: "0 0 9,21 * * ?"  # Every day at 9&21
+
+feature-gate:
+  redis-enabled: true
+  app-name: stax
+  app-env: ${APP_ENV:prod}
+  use-local-cache: true
+
+auth:
+  enabled: ${AUTH_ENABLED:true}
+  jwt:
+    signingKey: ${TOKEN_SIGNING_KEY}
+    validity: 43200
+  tos:
+    signingKey: ${TOS_TOKEN_SIGNING_KEY}
+    validity: 1800
+    type: ${TOS_TYPE} # tt or df
+  google:
+    enabled: true
+    client_id: ${GOOGLE_CLIENT_ID}
+    client_secret: ${GOOGLE_CLIENT_SECRET}
+  allowlist:
+    group_ids: ${AUTH_ALLOWLIST_GROUP_IDS}
+    domains: ${AUTH_ALLOWLIST_DOMAINS}
+
+aes:
+  secretKey: ${AES_SECRET_KEY}
+
+servlet:
+  multipart:
+    max-file-size: 100MB
+    max-request-size: 100MB
+server:
+  tomcat:
+    max-http-form-post-size: 100MB
+
+gcm:
+  secretKey: TBD
+
+user:
+  firstName: ${SYSTEM_USER_FIRST_NAME}
+  lastName: ${SYSTEM_USER_LAST_NAME}
+  email: ${SYSTEM_USER_EMAIL}
+
+liquibase:
+  retry:
+    max-attempts: 12
+    wait-seconds: 10

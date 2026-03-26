@@ -1,0 +1,297 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+databaseChangeLog:
+  - changeSet:
+      id: v2-seed-system-user
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM user"
+      changes:
+        - insert:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  value: user-e040fe2f-ae45-11f0-93fc-0242ac110002
+              - column:
+                  name: first_name
+                  value: System
+              - column:
+                  name: last_name
+                  value: User
+              - column:
+                  name: email
+                  value: "${adminUserMail}"
+              - column:
+                  name: role
+                  value: SYSTEM
+              - column:
+                  name: is_enabled
+                  valueBoolean: false
+              - column:
+                  name: created_at
+                  valueDate: NOW()
+              - column:
+                  name: updated_at
+                  valueDate: NOW()
+              - column:
+                  name: status
+                  value: ACTIVE
+  - changeSet:
+      id: v2-seed-models
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM model"
+      changes:
+        - loadData:
+            file: model.csv
+            tableName: model
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: STRING
+              - column:
+                  name: comments
+                  type: STRING
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: description
+                  type: STRING
+              - column:
+                  name: descriptors
+                  type: STRING
+              - column:
+                  name: is_deprecated
+                  type: BOOLEAN
+              - column:
+                  name: label
+                  type: STRING
+              - column:
+                  name: name
+                  type: STRING
+              - column:
+                  name: properties
+                  type: STRING
+              - column:
+                  name: provider
+                  type: STRING
+              - column:
+                  name: type
+                  type: STRING
+              - column:
+                  name: updated_at
+                  type: DATETIME
+              - column:
+                  name: url
+                  type: STRING
+              - column:
+                  name: version
+                  type: STRING
+              - column:
+                  name: user_id
+                  type: STRING
+              - column:
+                  name: release_date
+                  type: DATETIME
+  - changeSet:
+      id: v2-seed-model-inputs
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM model_input"
+      changes:
+        - loadData:
+            file: model_input.csv
+            tableName: model_input
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: STRING
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: expected_output
+                  type: STRING
+              - column:
+                  name: variables
+                  type: STRING
+              - column:
+                  name: role
+                  type: NUMERIC
+              - column:
+                  name: text
+                  type: STRING
+              - column:
+                  name: updated_at
+                  type: DATETIME
+              - column:
+                  name: parent_id
+                  type: STRING
+              - column:
+                  name: user_id
+                  type: STRING
+  - changeSet:
+      id: v2-seed-llm-evaluators
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM llm_evaluator"
+      changes:
+        - loadData:
+            file: llm_evaluator.csv
+            tableName: llm_evaluator
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: STRING
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: is_deprecated
+                  type: BOOLEAN
+              - column:
+                  name: description
+                  type: STRING
+              - column:
+                  name: name
+                  type: STRING
+              - column:
+                  name: output_categories
+                  type: STRING
+              - column:
+                  name: output_format_type
+                  type: STRING
+              - column:
+                  name: type
+                  type: STRING
+              - column:
+                  name: updated_at
+                  type: DATETIME
+              - column:
+                  name: variables
+                  type: STRING
+              - column:
+                  name: model_id
+                  type: STRING
+              - column:
+                  name: user_id
+                  type: STRING
+  - changeSet:
+      id: v2-seed-llm-turn-inputs
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM llm_turn_inputs"
+      changes:
+        - loadData:
+            file: llm_turn_inputs.csv
+            tableName: llm_turn_inputs
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: turn_id
+                  type: STRING
+              - column:
+                  name: input_id
+                  type: STRING
+  - changeSet:
+      id: v2-seed-pairwise-llm-evaluators
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM pairwise_llm_evaluator"
+      changes:
+        - loadData:
+            file: pairwise_llm_evaluator.csv
+            tableName: pairwise_llm_evaluator
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: id
+                  type: STRING
+              - column:
+                  name: name
+                  type: STRING
+              - column:
+                  name: output_format_type
+                  type: STRING
+              - column:
+                  name: type
+                  type: STRING
+              - column:
+                  name: user_id
+                  type: STRING
+              - column:
+                  name: description
+                  type: STRING
+              - column:
+                  name: variables
+                  type: STRING
+              - column:
+                  name: output_categories
+                  type: STRING
+              - column:
+                  name: model_id
+                  type: STRING
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+              - column:
+                  name: is_deprecated
+                  type: BOOLEAN
+  - changeSet:
+      id: v2-seed-pairwise-llm-turn-inputs
+      author: stax
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM pairwise_llm_turn_inputs"
+      changes:
+        - loadData:
+            file: pairwise_llm_turn_inputs.csv
+            tableName: pairwise_llm_turn_inputs
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  name: turn_id
+                  type: STRING
+              - column:
+                  name: input_id
+                  type: STRING

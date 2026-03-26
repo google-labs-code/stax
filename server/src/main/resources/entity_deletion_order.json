@@ -1,0 +1,98 @@
+[
+  {
+    "table_name": "score"
+  },
+  {
+    "table_name": "pairwise_score"
+  },
+  {
+    "table_name": "pointwise_heuristic_evaluation_score"
+  },
+  {
+    "table_name": "sxs_human_feedback"
+  },  
+  {
+    "table_name": "human_scores"
+  },
+  {
+    "table_name": "turn_inputs"
+  },
+  {
+    "table_name": "llm_turn_inputs"
+  },
+  {
+    "table_name": "pairwise_llm_turn_inputs"
+  },
+  {
+    "table_name": "tag_link"
+  },
+  {
+    "table_name": "sxs_evaluation_pair"
+  },
+  {
+    "table_name": "inference_status"
+  },
+  {
+    "table_name": "score_status"
+  },
+  {
+    "table_name": "input_status"
+  },
+  {
+    "table_name": "chat_turns"
+  },
+  {
+    "table_name": "model_response"
+  },
+  {
+    "table_name": "evaluation_monitoring"
+  },
+  {
+    "table_name": "inference_monitoring"
+  },
+  {
+    "table_name": "job_status"
+  },
+  {
+    "table_name": "bulk_upload_job_status"
+  },
+  {
+    "table_name": "llm_evaluator"
+  },
+  {
+    "table_name": "pairwise_llm_evaluator"
+  },
+  {
+    "table_name": "pointwise_heuristic_evaluator"
+  },
+  {
+    "table_name": "human_evaluators"
+  },
+  {
+    "table_name": "model_input"
+  },
+  {
+    "table_name": "chat"
+  },
+  {
+    "table_name": "evaluation_container"
+  },
+  {
+    "table_name": "model"
+  },
+  {
+    "table_name": "tag"
+  },
+  {
+    "table_name": "api_keys"
+  },
+  {
+    "table_name": "evaluableai_api_keys"
+  },
+  {
+    "table_name": "evaluation_status"
+  },
+  {
+    "table_name": "user"
+  }
+]

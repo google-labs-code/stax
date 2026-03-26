@@ -1,0 +1,44 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.planck.planck.domain.importexport.dto;
+
+import com.planck.planck.entitities.User;
+import org.springframework.web.multipart.MultipartFile;
+
+public record SxsImportRequest(
+    MultipartFile file,
+    User user,
+    String projectId,
+    String chatAColumnName,
+    String chatBColumnName,
+    String inputColumnName,
+    String systemInstructionAColumnName,
+    String systemInstructionBColumnName,
+    String outputAColumnName,
+    String outputBColumnName,
+    String modelLabelAColumnName,
+    String modelLabelBColumnName,
+    String tagsColumnName,
+    String llmEvaluationsAColumnName,
+    String llmEvaluationsBColumnName,
+    String inferenceAnalyticsAColumnName,
+    String inferenceAnalyticsBColumnName,
+    String variablesColumnName,
+    String ratingColumnName,
+    String notesColumnName,
+    String expectedOutputColumnName)
+    implements ImportRequest {}
