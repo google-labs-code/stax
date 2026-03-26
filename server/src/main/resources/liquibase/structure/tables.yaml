@@ -1,0 +1,1709 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+databaseChangeLog:
+- changeSet:
+    id: v2-create-table-api-keys
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: api_keys
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: anthropic_key
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: google_key
+            type: VARCHAR(255)
+        - column:
+            name: mistral_key
+            type: VARCHAR(255)
+        - column:
+            name: openai_key
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              unique: true        
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: grok_key
+            type: VARCHAR(255)
+        - column:
+            name: ollama_key
+            type: VARCHAR(255)
+        - column:
+            name: deepseek_key
+            type: VARCHAR(255)
+        - column:
+            name: huggingface_key
+            type: VARCHAR(255)
+        - column:
+            name: llama_key
+            type: VARCHAR(255)
+        tableName: api_keys
+- changeSet:
+    id: v2-create-table-bulk-upload-job-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: bulk_upload_job_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: comment
+            type: LONGTEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: file_name
+            type: VARCHAR(255)
+        - column:
+            name: job_status_id
+            type: VARCHAR(255)
+        - column:
+            name: prompt_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: status
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: bulk_upload_job_status
+- changeSet:
+    id: v2-create-table-chat
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: chat
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: variables
+            type: JSON
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: container_id
+            type: VARCHAR(255)
+        tableName: chat
+- changeSet:
+    id: v2-create-table-chat-turns
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: chat_turns
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: chat_id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: sequence_id
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: model_response_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: chat_turns
+- changeSet:
+    id: v2-create-table-evaluation-container
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: evaluation_container
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: container_type
+            type: VARCHAR(31)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(1500)
+        - column:
+            constraints:
+              nullable: false
+            name: evaluation_type
+            type: VARCHAR(50)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: is_protected
+            type: BIT(1)
+        - column:
+            name: is_default
+            type: BIT(1)
+        - column:
+            name: dataset_type
+            type: VARCHAR(255)
+        tableName: evaluation_container
+- changeSet:
+    id: v2-create-table-evaluation-monitoring
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: evaluation_monitoring
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: completion_tokens
+            type: INT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: eval_model_provider
+            type: VARCHAR(255)
+        - column:
+            name: prompt_tokens
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: time_taken
+            type: DOUBLE
+        - column:
+            name: total_tokens
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: llm_evaluator_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: eval_model_id
+            type: VARCHAR(255)
+        - column:
+            name: container_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: pairwise_llm_evaluator_id
+            type: VARCHAR(255)
+        tableName: evaluation_monitoring
+- changeSet:
+    id: v2-create-table-evaluation-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: evaluation_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: chat_turn_id
+            type: VARCHAR(255)
+        - column:
+            name: comments
+            type: LONGTEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: evaluator_id
+            type: VARCHAR(255)
+        - column:
+            name: job_id
+            type: VARCHAR(255)
+        - column:
+            name: job_status_id
+            type: VARCHAR(255)
+        - column:
+            name: reason
+            type: VARCHAR(4000)
+        - column:
+            name: container_id
+            type: VARCHAR(255)
+        - column:
+            name: status
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: evaluation_status
+- changeSet:
+    id: v2-create-table-human-evaluators
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: human_evaluators
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: associated_entity_id
+            type: VARCHAR(255)
+        - column:
+            name: categories
+            type: TEXT
+        - column:
+            name: comments
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: is_deprecated
+            type: BIT(1)
+        - column:
+            name: description
+            type: VARCHAR(1000)
+        - column:
+            constraints:
+              nullable: false
+            name: linked_entity_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: range_options
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: scope_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: scoring_mechanism_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: human_evaluators
+- changeSet:
+    id: v2-create-table-human-scores
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: human_scores
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: score
+            type: DOUBLE
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: human_evaluator_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: notes
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: model_response_id
+            type: VARCHAR(255)
+        tableName: human_scores
+- changeSet:
+    id: v2-create-table-inference-monitoring
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: inference_monitoring
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: avg_chat_latency
+            type: DOUBLE
+        - column:
+            name: chat_total_completion_tokens
+            type: INT
+        - column:
+            name: chat_total_prompt_tokens
+            type: INT
+        - column:
+            name: chat_total_tokens
+            type: INT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: model_provider
+            type: VARCHAR(255)
+        - column:
+            name: sequence
+            type: INT
+        - column:
+            name: turn_completion_tokens
+            type: INT
+        - column:
+            name: turn_prompt_tokens
+            type: INT
+        - column:
+            name: turn_time_taken
+            type: DOUBLE
+        - column:
+            name: turn_total_tokens
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: model_id
+            type: VARCHAR(255)
+        - column:
+            name: container_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: inference_monitoring
+- changeSet:
+    id: v2-create-table-inference-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: inference_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: comments
+            type: LONGTEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: job_id
+            type: VARCHAR(255)
+        - column:
+            name: job_status_id
+            type: VARCHAR(255)
+        - column:
+            name: reason
+            type: VARCHAR(4000)
+        - column:
+            name: container_id
+            type: VARCHAR(255)
+        - column:
+            name: status
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              unique: true
+            name: chat_turn_id
+            type: VARCHAR(255)
+        tableName: inference_status
+- changeSet:
+    id: v2-create-table-input-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: input_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: comment
+            type: LONGTEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: input_id
+            type: VARCHAR(255)
+        - column:
+            name: job_status_id
+            type: VARCHAR(255)
+        - column:
+            name: model_name
+            type: VARCHAR(255)
+        - column:
+            name: model_version
+            type: VARCHAR(255)
+        - column:
+            name: status
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: project_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: input_status
+- changeSet:
+    id: v2-create-table-job-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: job_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: comments
+            type: LONGTEXT
+        - column:
+            name: end_time
+            type: datetime(6)
+        - column:
+            defaultValueNumeric: 0
+            name: failed
+            type: INT
+        - column:
+            defaultValueNumeric: 0
+            name: in_progress
+            type: INT
+        - column:
+            defaultValueNumeric: 0
+            name: pending
+            type: INT
+        - column:
+            name: start_time
+            type: datetime(6)
+        - column:
+            name: status
+            type: INT
+        - column:
+            defaultValueNumeric: 0
+            name: stopped
+            type: INT
+        - column:
+            defaultValueNumeric: 0
+            name: successful
+            type: INT
+        - column:
+            defaultValueNumeric: 0
+            name: total
+            type: INT
+        - column:
+            name: type
+            type: VARCHAR(255)
+        - column:
+            name: project_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: job_status
+- changeSet:
+    id: v2-create-table-llm-evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: llm_evaluator
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: is_deprecated
+            type: BIT(1)
+        - column:
+            constraints:
+              nullable: false
+            name: description
+            type: VARCHAR(1500)
+        - column:
+            constraints:
+              nullable: false
+              unique: true
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: output_categories
+            type: JSON
+        - column:
+            constraints:
+              nullable: false
+            name: output_format_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: variables
+            type: JSON
+        - column:
+            constraints:
+              nullable: false
+            name: model_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: llm_evaluator
+- changeSet:
+    id: v2-create-table-llm-turn-inputs
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: llm_turn_inputs
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: turn_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: input_id
+            type: VARCHAR(255)
+        tableName: llm_turn_inputs
+- changeSet:
+    id: v2-create-table-model
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: model
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: comments
+            type: LONGTEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: description
+            type: LONGTEXT
+        - column:
+            name: descriptors
+            type: JSON
+        - column:
+            constraints:
+              nullable: false
+            name: is_deprecated
+            type: BIT(1)
+        - column:
+            constraints:
+              nullable: false
+            name: label
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: properties
+            type: JSON
+        - column:
+            constraints:
+              nullable: false
+            name: provider
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: type
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: url
+            type: VARCHAR(255)
+        - column:
+            name: version
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: release_date
+            type: datetime(6)
+        tableName: model
+- changeSet:
+    id: v2-create-table-model-input
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: model_input
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: expected_output
+            type: LONGTEXT
+        - column:
+            name: variables
+            type: JSON
+        - column:
+            constraints:
+              nullable: false
+            name: role
+            type: TINYINT(3)
+        - column:
+            name: text
+            type: LONGTEXT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: parent_id
+            type: VARCHAR(255)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: model_input
+- changeSet:
+    id: v2-create-table-model-response
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: model_response
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: text
+            type: LONGTEXT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              unique: true
+            name: inference_monitoring_id
+            type: VARCHAR(255)
+        - column:
+            name: model_id
+            type: VARCHAR(255)
+        - column:
+            name: container_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: thinking
+            type: LONGTEXT
+        tableName: model_response
+- changeSet:
+    id: v2-create-table-pairwise-llm-evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: pairwise_llm_evaluator
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: output_format_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: description
+            type: VARCHAR(1500)
+        - column:
+            name: variables
+            type: JSON
+        - column:
+            name: output_categories
+            type: JSON
+        - column:
+            constraints:
+              nullable: false
+            name: model_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: is_deprecated
+            type: BIT(1)
+        tableName: pairwise_llm_evaluator
+- changeSet:
+    id: v2-create-table-pairwise-llm-turn-inputs
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: pairwise_llm_turn_inputs
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: turn_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: input_id
+            type: VARCHAR(255)
+        tableName: pairwise_llm_turn_inputs
+- changeSet:
+    id: v2-create-table-pairwise-score
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: pairwise_score
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: TIMESTAMP(0)
+        - column:
+            name: updated_at
+            type: TIMESTAMP(0)
+        - column:
+            constraints:
+              nullable: false
+            name: sxs_evaluation_pair
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: chat_turn_a
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: chat_turn_b
+            type: VARCHAR(255)
+        - column:
+            name: score
+            type: VARCHAR(255)
+        - column:
+            name: score_type
+            type: VARCHAR(50)
+        - column:
+            name: scorer
+            type: VARCHAR(255)
+        - column:
+            name: pairwise_llm_evaluator
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: llm_response
+            type: TEXT
+        - column:
+            name: evaluation_status
+            type: VARCHAR(255)
+        - column:
+            name: evaluation_monitoring_id
+            type: VARCHAR(255)
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-table-pointwise-heuristic-evaluation-score
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: pointwise_heuristic_evaluation_score
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              unique: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: model_response_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: pointwise_heuristic_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: is_match
+            type: BIT(1)
+        - column:
+            constraints:
+              unique: true
+            name: evaluation_status
+            type: VARCHAR(255)
+        tableName: pointwise_heuristic_evaluation_score
+- changeSet:
+    id: v2-create-table-pointwise-heuristic-evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: pointwise_heuristic_evaluator
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              unique: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: criteria
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: criteria_type
+            type: VARCHAR(20)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: '0'
+            name: is_deprecated
+            type: BIT(1)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        tableName: pointwise_heuristic_evaluator
+- changeSet:
+    id: v2-create-table-score
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: score
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: llm_output_response_dto
+            type: TEXT
+        - column:
+            name: llm_response
+            type: TEXT
+        - column:
+            name: response_id
+            type: VARCHAR(255)
+        - column:
+            name: score
+            type: DOUBLE
+        - column:
+            name: score_type
+            type: VARCHAR(255)
+        - column:
+            name: scorer
+            type: VARCHAR(255)
+        - column:
+            name: source_id
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              unique: true
+            name: evaluation_monitoring_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              unique: true
+            name: evaluation_status
+            type: VARCHAR(255)
+        - column:
+            name: llm_evaluator
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: model_response_id
+            type: VARCHAR(255)
+        tableName: score
+- changeSet:
+    id: v2-create-table-score-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: score_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: comments
+            type: LONGTEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: job_id
+            type: VARCHAR(255)
+        - column:
+            name: job_status_id
+            type: VARCHAR(255)
+        - column:
+            name: reponse_id
+            type: VARCHAR(255)
+        - column:
+            name: scorer
+            type: VARCHAR(255)
+        - column:
+            name: status
+            type: INT
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            name: project_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: score_status
+- changeSet:
+    id: v2-create-table-sxs-evaluation-pair
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: sxs_evaluation_pair
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: container_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: chat_a
+            type: VARCHAR(255)
+        - column:
+            name: chat_b
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: chat_turn_id_a
+            type: VARCHAR(255)
+        - column:
+            name: chat_turn_id_b
+            type: VARCHAR(255)
+        - column:
+            name: expected_output
+            type: LONGTEXT
+        - column:
+            name: variables
+            type: JSON
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-table-sxs-human-feedback
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: sxs_human_feedback
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: pair_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: project_id
+            type: VARCHAR(255)
+        - column:
+            name: chat_turn_a
+            type: VARCHAR(255)
+        - column:
+            name: chat_turn_b
+            type: VARCHAR(255)
+        - column:
+            name: human_sxs_rating
+            type: VARCHAR(50)
+        - column:
+            name: human_sxs_notes
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: CURRENT_TIMESTAMP
+            name: created_at
+            type: TIMESTAMP(0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+            name: updated_at
+            type: TIMESTAMP(0)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: sxs_human_feedback
+- changeSet:
+    id: v2-create-table-tag
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: tag
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: tag_id
+            type: VARCHAR(255)
+        - column:
+            name: color
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: tag_name
+            type: VARCHAR(255)
+        - column:
+            name: type
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            defaultValueNumeric: 0
+            name: used_count
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: tag
+- changeSet:
+    id: v2-create-table-tag-link
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: tag_link
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: target_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: target_type
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: tag_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        tableName: tag_link
+- changeSet:
+    id: v2-create-table-tos
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: tos
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: content
+            type: TEXT
+        - column:
+            name: content_type
+            type: VARCHAR(255)
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            name: is_active
+            type: BIT(1)
+        - column:
+            name: type
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        tableName: tos
+- changeSet:
+    id: v2-create-table-turn-inputs
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: turn_inputs
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: turn_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: input_id
+            type: VARCHAR(255)
+        tableName: turn_inputs
+- changeSet:
+    id: v2-create-table-user
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: user
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: VARCHAR(255)
+        - column:
+            name: accepted_tos_details
+            type: TEXT
+        - column:
+            name: created_at
+            type: datetime(6)
+        - column:
+            constraints:
+              unique: true        
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: enabled_at
+            type: datetime(6)
+        - column:
+            name: first_name
+            type: VARCHAR(255)
+        - column:
+            name: is_enabled
+            type: BIT(1)
+        - column:
+            name: is_google_signin
+            type: BIT(1)
+        - column:
+            name: is_google_signup
+            type: BIT(1)
+        - column:
+            name: last_login_time
+            type: datetime(6)
+        - column:
+            name: last_name
+            type: VARCHAR(255)
+        - column:
+            name: role
+            type: VARCHAR(255)
+        - column:
+            name: updated_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: ACTIVE
+            name: status
+            type: VARCHAR(50)
+        tableName: user
+- changeSet:
+    id: v2-create-table-user-deletion-status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - tableExists:
+              tableName: user_deletion_status
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: request_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: request_timestamp
+            type: datetime(6)
+        - column:
+            name: completed_steps
+            type: INT
+        - column:
+            name: total_steps
+            type: INT
+        - column:
+            name: last_step_retries
+            type: INT
+        - column:
+            name: last_failure_step
+            type: VARCHAR(255)
+        - column:
+            name: last_failure_message
+            type: LONGTEXT
+        tableName: user_deletion_status

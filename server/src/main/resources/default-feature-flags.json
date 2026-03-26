@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0-default",
+  "features": [
+    {
+      "key": "stax-enable-new-dashboard",
+      "description": "Default state: Enables the new Vue.js-based user dashboard for the Stax project.",
+      "enabled": false
+    },
+    {
+      "key": "stax-use-optimized-search",
+      "description": "Default state: Switches to the new search algorithm for Stax.",
+      "enabled": false
+    }
+  ],
+  "metadata": {
+    "commit_hash": "default",
+    "author": "default",
+    "deploy_time_utc": "1970-01-01T00:00:00Z"
+  }
+}

@@ -1,0 +1,118 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.planck.planck.domain.inference.outputs;
+
+import com.planck.planck.domain.inference.dto.InferenceDTO;
+import com.planck.planck.entitities.ChatTurn;
+import com.planck.planck.entitities.JobStatus;
+import com.planck.planck.entitities.Model;
+import com.planck.planck.entitities.Project;
+import com.planck.planck.entitities.SxsEvaluationPair;
+import com.planck.planck.exceptions.IllegalInputException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class SXSGenerateOutputsStrategyMissingOnly extends SXSGenerateOutputsStrategy {
+  public SXSGenerateOutputsStrategyMissingOnly(Model modelA, Model modelB, Project project) {
+    super(modelA, modelB, project);
+  }
+
+  @Override
+  protected void validateInputs() {
+    super.validateInputs();
+    if (modelA == null && modelB == null) {
+      throw new IllegalInputException("Model A or Model B are required");
+    }
+  }
+
+  @Override
+  protected void duplicateChats() {
+    return;
+  }
+
+  @Override
+  protected void sendToQueue() {
+    QueueData queueData = collectChatTurnsForQueue();
+
+    if (queueData.hasChatTurns()) {
+      JobStatus job = createJobStatus(queueData.getTotalCount());
+      sendChatTurnsToQueue(queueData, job);
+    }
+  }
+
+  private QueueData collectChatTurnsForQueue() {
+    List<ChatTurn> chatTurnsForNewModel = new ArrayList<>();
+    List<ChatTurn> chatTurnsWithExistingModel = new ArrayList<>();
+    Map<String, String> turnToModelId = new HashMap<>();
+
+    for (SxsEvaluationPair sxsPair : sxsPairs) {
+      if (!isPairFailed(sxsPair)) {
+        processSideA(sxsPair, chatTurnsForNewModel, turnToModelId);
+        processSideB(sxsPair, chatTurnsForNewModel, turnToModelId);
+      }
+    }
+
+    return new QueueData(chatTurnsForNewModel, chatTurnsWithExistingModel, turnToModelId);
+  }
+
+  private void sendChatTurnsToQueue(QueueData queueData, JobStatus job) {
+    boolean isBulk = queueData.getTotalCount() > 10;
+
+    for (ChatTurn chatTurn : queueData.getChatTurnsForNewModel()) {
+      InferenceDTO dto = createInferenceDTO(job, chatTurn);
+      getPublisherService()
+          .sendInferenceWithModel(
+              chatTurn, dto, queueData.getTurnToModelId().get(chatTurn.getId()), false, isBulk);
+    }
+  }
+
+  private void processSideA(
+      SxsEvaluationPair sxsPair,
+      List<ChatTurn> chatTurnsForNewModel,
+      Map<String, String> turnToModelId) {
+    if (modelA == null) {
+      return;
+    }
+
+    ChatTurn latestTurn = sxsPair.getChatA().getLatestTurn();
+    if (latestTurn.getModelResponse() == null || latestTurn.getModelResponse().getText() == null) {
+      chatTurnsForNewModel.add(latestTurn);
+      turnToModelId.put(latestTurn.getId(), modelA.getId());
+    } else {
+      skippedSxsPairIds.add(sxsPair.getId());
+    }
+  }
+
+  private void processSideB(
+      SxsEvaluationPair sxsPair,
+      List<ChatTurn> chatTurnsForNewModel,
+      Map<String, String> turnToModelId) {
+    if (modelB == null) {
+      return;
+    }
+
+    ChatTurn latestTurn = sxsPair.getChatB().getLatestTurn();
+    if (latestTurn.getModelResponse() == null || latestTurn.getModelResponse().getText() == null) {
+      chatTurnsForNewModel.add(latestTurn);
+      turnToModelId.put(latestTurn.getId(), modelB.getId());
+    } else {
+      skippedSxsPairIds.add(sxsPair.getId());
+    }
+  }
+}

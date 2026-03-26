@@ -1,0 +1,1104 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+databaseChangeLog:
+- changeSet:
+    id: v2-create_turn_inputs_turn_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_turn_inputs_turn_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: turn_id
+        baseTableName: turn_inputs
+        constraintName: FK_turn_inputs_turn_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: chat_turns
+        validate: true
+- changeSet:
+    id: v2-create_score_evaluation_status_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_score_evaluation_status
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: evaluation_status
+        baseTableName: score
+        constraintName: FK_score_evaluation_status
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: evaluation_status
+        validate: true
+- changeSet:
+    id: v2-create-score_model_response_id_FK
+    author: stax
+    preConditions:
+    - onFail: MARK_RAN
+    - not:
+        - foreignKeyConstraintExists:
+            constraintName: fk_score_model_response
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: score
+        baseColumnNames: model_response_id
+        constraintName: fk_score_model_response
+        referencedTableName: model_response
+        referencedColumnNames: id
+        onDelete: CASCADE
+- changeSet:
+    id: v2-create_score_status_job_status_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_score_status_job_status_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: job_status_id
+        baseTableName: score_status
+        constraintName: FK_score_status_job_status_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: job_status
+        validate: true
+- changeSet:
+    id: v2-create_human_evaluators_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_human_evaluators_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: human_evaluators
+        constraintName: FK_human_evaluators_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_inference_monitoring_model_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_inference_monitoring_model_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: model_id
+        baseTableName: inference_monitoring
+        constraintName: FK_inference_monitoring_model_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model
+        validate: true
+- changeSet:
+    id: v2-create_evaluation_monitoring_llm_evaluator_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_evaluation_monitoring_llm_evaluator_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: llm_evaluator_id
+        baseTableName: evaluation_monitoring
+        constraintName: FK_evaluation_monitoring_llm_evaluator_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: llm_evaluator
+        validate: true
+- changeSet:
+    id: v2-create_fk_evaluation_monitoring_container_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_evaluation_monitoring_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: evaluation_monitoring
+        baseColumnNames: container_id
+        constraintName: fk_evaluation_monitoring_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id
+- changeSet:
+    id: v2-create_pairwise_score_sxs_pair_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_sxs_pair
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: sxs_evaluation_pair
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_sxs_pair
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: sxs_evaluation_pair
+        validate: true
+        onDelete: CASCADE
+- changeSet:
+    id: v2-create_pairwise_score_chat_turn_a_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_chat_turn_a
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: chat_turn_a
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_chat_turn_a
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: chat_turns
+        validate: true
+        onDelete: CASCADE
+- changeSet:
+    id: v2-create_pairwise_score_chat_turn_b_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_chat_turn_b
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: chat_turn_b
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_chat_turn_b
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: chat_turns
+        validate: true
+        onDelete: CASCADE
+- changeSet:
+    id: v2-create_pairwise_score_evaluator_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_evaluator
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: pairwise_llm_evaluator
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_evaluator
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: pairwise_llm_evaluator
+        validate: true
+- changeSet:
+    id: v2-create_pairwise_score_eval_status_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_eval_status
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: evaluation_status
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_eval_status
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: evaluation_status
+        validate: true
+- changeSet:
+    id: v2-create_pairwise_score_eval_monitoring_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_eval_monitoring
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: evaluation_monitoring_id
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_eval_monitoring
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: evaluation_monitoring
+        validate: true
+- changeSet:
+    id: v2-create_pairwise_score_user_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_score_user
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: pairwise_score
+        constraintName: FK_pairwise_score_user
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_chat_turns_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_chat_turns_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: chat_turns
+        constraintName: FK_chat_turns_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create-chat_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_chat_user
+    changes:
+      - addForeignKeyConstraint:
+          baseTableName: chat
+          baseColumnNames: user_id
+          referencedTableName: user
+          referencedColumnNames: id
+          constraintName: fk_chat_user
+          onDelete: CASCADE
+- changeSet:
+    id: v2-create-chat_turn_chat_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_chat_turns_chat
+    changes:
+      - addForeignKeyConstraint:
+          baseTableName: chat_turns
+          baseColumnNames: chat_id
+          referencedTableName: chat
+          referencedColumnNames: id
+          constraintName: fk_chat_turns_chat
+          onDelete: CASCADE          
+- changeSet:
+    id: v2-create_model_input_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_model_input_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: model_input
+        constraintName: FK_model_input_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_human_scores_model_response_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_human_scores_model_response
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: human_scores
+        baseColumnNames: model_response_id
+        constraintName: fk_human_scores_model_response
+        referencedTableName: model_response
+        referencedColumnNames: id
+        deferrable: false
+        initiallyDeferred: false
+        validate: true
+        onDelete: CASCADE
+- changeSet:
+    id: v2-create_human_scores_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_human_scores_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: human_scores
+        constraintName: FK_human_scores_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_score_llm_evaluator_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_score_llm_evaluator
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: llm_evaluator
+        baseTableName: score
+        constraintName: FK_score_llm_evaluator
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: llm_evaluator
+        validate: true
+- changeSet:
+    id: v2-create_fk_chat_container_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_chat_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: chat
+        baseColumnNames: container_id
+        constraintName: fk_chat_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id
+- changeSet:
+    id: v2-create_score_evaluation_monitoring_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_score_evaluation_monitoring_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: evaluation_monitoring_id
+        baseTableName: score
+        constraintName: FK_score_evaluation_monitoring_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: evaluation_monitoring
+        validate: true
+- changeSet:
+    id: v2-create_fk_job_status_container_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_job_status_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: job_status
+        baseColumnNames: project_id
+        constraintName: fk_job_status_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id
+- changeSet:
+    id: v2-create_human_scores_human_evaluator_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_human_scores_human_evaluator_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: human_evaluator_id
+        baseTableName: human_scores
+        constraintName: FK_human_scores_human_evaluator_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: human_evaluators
+        validate: true
+- changeSet:
+    id: v2-create_input_status_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_input_status_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: input_status
+        constraintName: FK_input_status_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_fk_score_status_container_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_score_status_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: score_status
+        baseColumnNames: project_id
+        constraintName: fk_score_status_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id
+- changeSet:
+    id: v2-create_input_status_job_status_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_input_status_job_status_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: job_status_id
+        baseTableName: input_status
+        constraintName: FK_input_status_job_status_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: job_status
+        validate: true
+- changeSet:
+    id: v2-create_inference_monitoring_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_inference_monitoring_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: inference_monitoring
+        constraintName: FK_inference_monitoring_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_model_input_parent_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_model_input_parent_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: parent_id
+        baseTableName: model_input
+        constraintName: FK_model_input_parent_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model_input
+        validate: true
+- changeSet:
+    id: v2-create_inference_status_chat_turn_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_inference_status_chat_turn_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: chat_turn_id
+        baseTableName: inference_status
+        constraintName: FK_inference_status_chat_turn_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: chat_turns
+        validate: true
+- changeSet:
+    id: v2-create_job_status_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_job_status_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: job_status
+        constraintName: FK_job_status_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_model_response_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_model_response_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: model_response
+        constraintName: FK_model_response_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_fk_model_response_container_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_model_response_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: model_response
+        baseColumnNames: container_id
+        constraintName: fk_model_response_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id
+- changeSet:
+    id: v2-create_api_keys_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_api_keys_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: api_keys
+        constraintName: FK_api_keys_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_turn_inputs_input_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_turn_inputs_input_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: input_id
+        baseTableName: turn_inputs
+        constraintName: FK_turn_inputs_input_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model_input
+        validate: true
+- changeSet:
+    id: v2-create_fk_inference_monitoring_container_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_inference_monitoring_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: inference_monitoring
+        baseColumnNames: container_id
+        constraintName: fk_inference_monitoring_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id
+- changeSet:
+    id: v2-create_tag_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_tag_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: tag
+        constraintName: FK_tag_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_llm_evaluator_model_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_llm_evaluator_model_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: model_id
+        baseTableName: llm_evaluator
+        constraintName: FK_llm_evaluator_model_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model
+        validate: true
+- changeSet:
+    id: v2-create_llm_evaluator_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_llm_evaluator_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: llm_evaluator
+        constraintName: FK_llm_evaluator_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_pairwise_llm_evaluator_model_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_llm_evaluator_model_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: model_id
+        baseTableName: pairwise_llm_evaluator
+        constraintName: FK_pairwise_llm_evaluator_model_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model
+        validate: true
+- changeSet:
+    id: v2-create_pairwise_llm_evaluator_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pairwise_llm_evaluator_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: pairwise_llm_evaluator
+        constraintName: FK_pairwise_llm_evaluator_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_FK_eval_monitoring_pairwise_evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_eval_monitoring_pairwise_evaluator
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: pairwise_llm_evaluator_id
+        baseTableName: evaluation_monitoring
+        constraintName: FK_eval_monitoring_pairwise_evaluator
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: pairwise_llm_evaluator
+        validate: true
+- changeSet:
+    id: v2-create_chat_turns_model_response_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_chat_turns_model_response_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: model_response_id
+        baseTableName: chat_turns
+        constraintName: FK_chat_turns_model_response_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model_response
+        validate: true
+- changeSet:
+    id: v2-create_evaluation_monitoring_eval_model_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_evaluation_monitoring_eval_model_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: eval_model_id
+        baseTableName: evaluation_monitoring
+        constraintName: FK_evaluation_monitoring_eval_model_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model
+        validate: true
+- changeSet:
+    id: v2-create_llm_turn_inputs_turn_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_llm_turn_inputs_turn_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: turn_id
+        baseTableName: llm_turn_inputs
+        constraintName: FK_llm_turn_inputs_turn_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: llm_evaluator
+        validate: true
+- changeSet:
+    id: v2-create_score_status_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_score_status_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: score_status
+        constraintName: FK_score_status_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_model_response_model_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_model_response_model_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: model_id
+        baseTableName: model_response
+        constraintName: FK_model_response_model_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model
+        validate: true
+- changeSet:
+    id: v2-create_llm_turn_inputs_input_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_llm_turn_inputs_input_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: input_id
+        baseTableName: llm_turn_inputs
+        constraintName: FK_llm_turn_inputs_input_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: model_input
+        validate: true
+- changeSet:
+    id: v2-create_tag_link_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_tag_link_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: tag_link
+        constraintName: FK_tag_link_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_model_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_model_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: model
+        constraintName: FK_model_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_tag_link_tag_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_tag_link_tag_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tag_id
+        baseTableName: tag_link
+        constraintName: FK_tag_link_tag_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: tag_id
+        referencedTableName: tag
+        validate: true
+- changeSet:
+    id: v2-create_evaluation_monitoring_user_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_evaluation_monitoring_user_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: evaluation_monitoring
+        constraintName: FK_evaluation_monitoring_user_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: user
+        validate: true
+- changeSet:
+    id: v2-create_model_response_inference_monitoring_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_model_response_inference_monitoring_id
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: inference_monitoring_id
+        baseTableName: model_response
+        constraintName: FK_model_response_inference_monitoring_id
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: inference_monitoring
+        validate: true
+- changeSet:
+    id: v2-create_sxs_evaluation_pair_chat_a_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_sxs_pair_to_chat_a
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_sxs_pair_to_chat_b
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_sxs_pair_to_chat_turn_a
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_sxs_pair_to_chat_turn_b
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_sxs_evaluation_pair_user_id
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_sxs_pair_container_id
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: sxs_evaluation_pair
+        baseColumnNames: chat_a
+        constraintName: FK_sxs_pair_to_chat_a
+        referencedTableName: chat
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sxs_evaluation_pair
+        baseColumnNames: chat_b
+        constraintName: FK_sxs_pair_to_chat_b
+        referencedTableName: chat
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sxs_evaluation_pair
+        baseColumnNames: chat_turn_id_a
+        constraintName: FK_sxs_pair_to_chat_turn_a
+        referencedTableName: chat_turns
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sxs_evaluation_pair
+        baseColumnNames: chat_turn_id_b
+        constraintName: FK_sxs_pair_to_chat_turn_b
+        referencedTableName: chat_turns
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sxs_evaluation_pair
+        baseColumnNames: user_id
+        constraintName: FK_sxs_evaluation_pair_user_id
+        referencedTableName: user
+        referencedColumnNames: id
+        onDelete: CASCADE
+    - addForeignKeyConstraint:
+        baseTableName: sxs_evaluation_pair
+        baseColumnNames: container_id
+        constraintName: fk_sxs_pair_container_id
+        referencedTableName: evaluation_container
+        referencedColumnNames: id        
+- changeSet:
+    id: v2-create_pointwise_evaluation_score_fks
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_pointwise_eval_score_model_response
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_pointwise_eval_score_pointwise_heuristic
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_pointwise_eval_score_user
+    changes:
+      - addForeignKeyConstraint:
+          baseTableName: pointwise_heuristic_evaluation_score
+          baseColumnNames: model_response_id
+          constraintName: fk_pointwise_eval_score_model_response
+          referencedTableName: model_response
+          referencedColumnNames: id
+          onDelete: CASCADE
+      - addForeignKeyConstraint:
+          baseTableName: pointwise_heuristic_evaluation_score
+          baseColumnNames: pointwise_heuristic_id
+          constraintName: fk_pointwise_eval_score_pointwise_heuristic
+          referencedTableName: pointwise_heuristic_evaluator
+          referencedColumnNames: id
+          onDelete: CASCADE
+      - addForeignKeyConstraint:
+          baseTableName: pointwise_heuristic_evaluation_score
+          baseColumnNames: user_id
+          constraintName: fk_pointwise_eval_score_user
+          referencedTableName: user
+          referencedColumnNames: id
+          onDelete: CASCADE
+- changeSet:
+    id: v2-create_pointwise_heuristic_evaluation_score_evaluation_status_id_FK
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: FK_pointwise_heuristic_evaluation_score_evaluation_status
+    changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: evaluation_status
+          baseTableName: pointwise_heuristic_evaluation_score
+          constraintName: FK_pointwise_heuristic_evaluation_score_evaluation_status
+          deferrable: false
+          initiallyDeferred: false
+          referencedColumnNames: id
+          referencedTableName: evaluation_status
+          validate: true

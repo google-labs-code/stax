@@ -1,0 +1,27 @@
+# Use the official maven/Java 8 image to create a build artifact.
+# https://hub.docker.com/_/maven
+FROM maven:3.9.9 as builder
+
+# Copy local code to the container image.
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+
+# Build a release artifact.
+RUN mvn package -DskipTests
+
+# Cloud Run assumption
+# https://stackoverflow.com/questions/76945843/default-startup-tcp-probe-failed-1-time-consecutively-for-container-develop-on
+ENV HOST 0.0.0.0
+
+# Use OpenJDK for base image.
+FROM eclipse-temurin:17-jdk
+
+# Copy the jar to the production image from the builder stage.
+COPY --from=builder /app/target/planck-*.war /planck.war
+
+# Extract the WAR file to run with classpath
+RUN mkdir -p /app && cd /app && jar -xf /planck.war
+
+# Set the monitoring profile in addition to prod and run the monitoring application
+ENTRYPOINT ["java", "-DcloudSqlRefreshStrategy=lazy", "-cp", "/app/WEB-INF/classes:/app/WEB-INF/lib/*", "com.planck.planck.PlanckMonitoringApplication"]

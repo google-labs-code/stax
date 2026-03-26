@@ -1,0 +1,56 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+databaseChangeLog:
+  - changeSet:
+      id: create_system_user
+      author: stax
+      preConditions:
+      - onFail: MARK_RAN
+      -  tableExists:
+          tableName: user
+      -  sqlCheck:
+          sql: "SELECT COUNT(*) FROM user WHERE email = '${adminUserMail}'"
+          expectedResult: 0
+      changes:
+        - insert:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  value: user-e040fe2f-ae45-11f0-93fc-0242ac110002
+              - column:
+                  name: first_name
+                  value: System
+              - column:
+                  name: last_name
+                  value: User
+              - column:
+                  name: email
+                  value: "${adminUserMail}"
+              - column:
+                  name: role
+                  value: SYSTEM
+              - column:
+                  name: is_enabled
+                  valueBoolean: false
+              - column:
+                  name: created_at
+                  valueDate: NOW()
+              - column:
+                  name: updated_at
+                  valueDate: NOW()
+              - column:
+                  name: status
+                  value: ACTIVE

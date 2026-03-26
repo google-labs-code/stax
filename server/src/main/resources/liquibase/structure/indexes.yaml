@@ -1,0 +1,1025 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+databaseChangeLog:
+- changeSet:
+    id: v2-create-index-FK_pairwise_score_eval_monitoring
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: FK_pairwise_score_eval_monitoring
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: evaluation_monitoring_id
+        indexName: FK_pairwise_score_eval_monitoring
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-FK_pairwise_score_eval_status
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: FK_pairwise_score_eval_status
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: evaluation_status
+        indexName: FK_pairwise_score_eval_status
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-FK_sxs_pair_to_chat_a
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_evaluation_pair
+              indexName: FK_sxs_pair_to_chat_a
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_a
+        indexName: FK_sxs_pair_to_chat_a
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-index-FK_sxs_pair_to_chat_b
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_evaluation_pair
+              indexName: FK_sxs_pair_to_chat_b
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_b
+        indexName: FK_sxs_pair_to_chat_b
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-index-IDX_chat_turns_model_response_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: chat_turns
+              indexName: IDX_chat_turns_model_response_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_response_id
+        indexName: IDX_chat_turns_model_response_id
+        tableName: chat_turns
+- changeSet:
+    id: v2-create-index-IDX_chat_turns_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: chat_turns
+              indexName: IDX_chat_turns_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_chat_turns_user_id
+        tableName: chat_turns
+- changeSet:
+    id: v2-create-index-IDX_eval_monitoring_pairwise_evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: evaluation_monitoring
+              indexName: IDX_eval_monitoring_pairwise_evaluator
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: pairwise_llm_evaluator_id
+        indexName: IDX_eval_monitoring_pairwise_evaluator
+        tableName: evaluation_monitoring
+- changeSet:
+    id: v2-create-index-IDX_evaluation_monitoring_eval_model_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: evaluation_monitoring
+              indexName: IDX_evaluation_monitoring_eval_model_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: eval_model_id
+        indexName: IDX_evaluation_monitoring_eval_model_id
+        tableName: evaluation_monitoring
+- changeSet:
+    id: v2-create-index-IDX_evaluation_monitoring_llm_evaluator_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: evaluation_monitoring
+              indexName: IDX_evaluation_monitoring_llm_evaluator_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: llm_evaluator_id
+        indexName: IDX_evaluation_monitoring_llm_evaluator_id
+        tableName: evaluation_monitoring
+- changeSet:
+    id: v2-create-index-IDX_evaluation_monitoring_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: evaluation_monitoring
+              indexName: IDX_evaluation_monitoring_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: container_id
+        indexName: IDX_evaluation_monitoring_project_id
+        tableName: evaluation_monitoring
+- changeSet:
+    id: v2-create-index-IDX_evaluation_monitoring_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: evaluation_monitoring
+              indexName: IDX_evaluation_monitoring_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_evaluation_monitoring_user_id
+        tableName: evaluation_monitoring
+- changeSet:
+    id: v2-create-index-IDX_heuristic_scorer_model_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: inference_monitoring
+              indexName: IDX_heuristic_scorer_model_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_id
+        indexName: IDX_heuristic_scorer_model_id
+        tableName: inference_monitoring
+- changeSet:
+    id: v2-create-index-IDX_human_evaluators_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: human_evaluators
+              indexName: IDX_human_evaluators_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_human_evaluators_user_id
+        tableName: human_evaluators
+- changeSet:
+    id: v2-create-index-IDX_human_scores_human_evaluator_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: human_scores
+              indexName: IDX_human_scores_human_evaluator_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: human_evaluator_id
+        indexName: IDX_human_scores_human_evaluator_id
+        tableName: human_scores
+- changeSet:
+    id: v2-create-index-IDX_human_scores_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: human_scores
+              indexName: IDX_human_scores_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_human_scores_user_id
+        tableName: human_scores
+- changeSet:
+    id: v2-create-index-IDX_inference_monitoring_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: inference_monitoring
+              indexName: IDX_inference_monitoring_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: container_id
+        indexName: IDX_inference_monitoring_project_id
+        tableName: inference_monitoring
+- changeSet:
+    id: v2-create-index-IDX_inference_monitoring_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: inference_monitoring
+              indexName: IDX_inference_monitoring_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_inference_monitoring_user_id
+        tableName: inference_monitoring
+- changeSet:
+    id: v2-create-index-IDX_input_status_job_status_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: input_status
+              indexName: IDX_input_status_job_status_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: job_status_id
+        indexName: IDX_input_status_job_status_id
+        tableName: input_status
+- changeSet:
+    id: v2-create-index-IDX_input_status_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: input_status
+              indexName: IDX_input_status_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: project_id
+        indexName: IDX_input_status_project_id
+        tableName: input_status
+- changeSet:
+    id: v2-create-index-IDX_input_status_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: input_status
+              indexName: IDX_input_status_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_input_status_user_id
+        tableName: input_status
+- changeSet:
+    id: v2-create-index-IDX_job_status_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: job_status
+              indexName: IDX_job_status_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: project_id
+        indexName: IDX_job_status_project_id
+        tableName: job_status
+- changeSet:
+    id: v2-create-index-IDX_job_status_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: job_status
+              indexName: IDX_job_status_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_job_status_user_id
+        tableName: job_status
+- changeSet:
+    id: v2-create-index-IDX_llm_evaluator_model_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: llm_evaluator
+              indexName: IDX_llm_evaluator_model_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_id
+        indexName: IDX_llm_evaluator_model_id
+        tableName: llm_evaluator
+- changeSet:
+    id: v2-create-index-IDX_llm_evaluator_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: llm_evaluator
+              indexName: IDX_llm_evaluator_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_llm_evaluator_user_id
+        tableName: llm_evaluator
+- changeSet:
+    id: v2-create-index-IDX_llm_turn_inputs_input_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: llm_turn_inputs
+              indexName: IDX_llm_turn_inputs_input_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: input_id
+        indexName: IDX_llm_turn_inputs_input_id
+        tableName: llm_turn_inputs
+- changeSet:
+    id: v2-create-index-IDX_llm_turn_inputs_turn_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: llm_turn_inputs
+              indexName: IDX_llm_turn_inputs_turn_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: turn_id
+        indexName: IDX_llm_turn_inputs_turn_id
+        tableName: llm_turn_inputs
+- changeSet:
+    id: v2-create-index-IDX_model_input_parent_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: model_input
+              indexName: IDX_model_input_parent_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: parent_id
+        indexName: IDX_model_input_parent_id
+        tableName: model_input
+- changeSet:
+    id: v2-create-index-IDX_model_input_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: model_input
+              indexName: IDX_model_input_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_model_input_user_id
+        tableName: model_input
+- changeSet:
+    id: v2-create-index-IDX_model_response_model_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: model_response
+              indexName: IDX_model_response_model_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_id
+        indexName: IDX_model_response_model_id
+        tableName: model_response
+- changeSet:
+    id: v2-create-index-IDX_model_response_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: model_response
+              indexName: IDX_model_response_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: container_id
+        indexName: IDX_model_response_project_id
+        tableName: model_response
+- changeSet:
+    id: v2-create-index-IDX_model_response_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: model_response
+              indexName: IDX_model_response_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_model_response_user_id
+        tableName: model_response
+- changeSet:
+    id: v2-create-index-IDX_model_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: model
+              indexName: IDX_model_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_model_user_id
+        tableName: model
+- changeSet:
+    id: v2-create-index-IDX_pairwise_llm_evaluator_model_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_llm_evaluator
+              indexName: IDX_pairwise_llm_evaluator_model_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_id
+        indexName: IDX_pairwise_llm_evaluator_model_id
+        tableName: pairwise_llm_evaluator
+- changeSet:
+    id: v2-create-index-IDX_pairwise_llm_evaluator_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_llm_evaluator
+              indexName: IDX_pairwise_llm_evaluator_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_pairwise_llm_evaluator_user_id
+        tableName: pairwise_llm_evaluator
+- changeSet:
+    id: v2-create-index-IDX_pairwise_score_chat_turn_a
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: IDX_pairwise_score_chat_turn_a
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_turn_a
+        indexName: IDX_pairwise_score_chat_turn_a
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-IDX_pairwise_score_chat_turn_b
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: IDX_pairwise_score_chat_turn_b
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_turn_b
+        indexName: IDX_pairwise_score_chat_turn_b
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-IDX_pairwise_score_evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: IDX_pairwise_score_evaluator
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: pairwise_llm_evaluator
+        indexName: IDX_pairwise_score_evaluator
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-IDX_pairwise_score_sxs_eval_pair
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: IDX_pairwise_score_sxs_eval_pair
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: sxs_evaluation_pair
+        indexName: IDX_pairwise_score_sxs_eval_pair
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-IDX_pairwise_score_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pairwise_score
+              indexName: IDX_pairwise_score_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_pairwise_score_user_id
+        tableName: pairwise_score
+- changeSet:
+    id: v2-create-index-IDX_score_llm_evaluator
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: score
+              indexName: IDX_score_llm_evaluator
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: llm_evaluator
+        indexName: IDX_score_llm_evaluator
+        tableName: score
+- changeSet:
+    id: v2-create-index-IDX_score_status_job_status_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: score_status
+              indexName: IDX_score_status_job_status_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: job_status_id
+        indexName: IDX_score_status_job_status_id
+        tableName: score_status
+- changeSet:
+    id: v2-create-index-IDX_score_status_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: score_status
+              indexName: IDX_score_status_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: project_id
+        indexName: IDX_score_status_project_id
+        tableName: score_status
+- changeSet:
+    id: v2-create-index-IDX_score_status_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: score_status
+              indexName: IDX_score_status_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_score_status_user_id
+        tableName: score_status
+- changeSet:
+    id: v2-create-index-IDX_sxs_evaluation_pair_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_evaluation_pair
+              indexName: IDX_sxs_evaluation_pair_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_sxs_evaluation_pair_user_id
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-index-IDX_sxs_pair_chat_turn_a
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_evaluation_pair
+              indexName: IDX_sxs_pair_chat_turn_a
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_turn_id_a
+        indexName: IDX_sxs_pair_chat_turn_a
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-index-IDX_sxs_pair_chat_turn_b
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_evaluation_pair
+              indexName: IDX_sxs_pair_chat_turn_b
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_turn_id_b
+        indexName: IDX_sxs_pair_chat_turn_b
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-index-IDX_sxs_pair_project
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_evaluation_pair
+              indexName: IDX_sxs_pair_project
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: container_id
+        indexName: IDX_sxs_pair_project
+        tableName: sxs_evaluation_pair
+- changeSet:
+    id: v2-create-index-IDX_tag_link_tag_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: tag_link
+              indexName: IDX_tag_link_tag_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: tag_id
+        indexName: IDX_tag_link_tag_id
+        tableName: tag_link
+- changeSet:
+    id: v2-create-index-IDX_tag_link_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: tag_link
+              indexName: IDX_tag_link_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_tag_link_user_id
+        tableName: tag_link
+- changeSet:
+    id: v2-create-index-IDX_tag_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: tag
+              indexName: IDX_tag_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_tag_user_id
+        tableName: tag
+- changeSet:
+    id: v2-create-index-IDX_turn_inputs_input_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: turn_inputs
+              indexName: IDX_turn_inputs_input_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: input_id
+        indexName: IDX_turn_inputs_input_id
+        tableName: turn_inputs
+- changeSet:
+    id: v2-create-index-IDX_chat_turns_chat_sequence
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: chat_turns
+              indexName: IDX_chat_turns_chat_sequence
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_id
+        - column:
+            name: sequence_id
+        indexName: IDX_chat_turns_chat_sequence
+        tableName: chat_turns
+- changeSet:
+    id: v2-create-index-IDX_turn_inputs_turn_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: turn_inputs
+              indexName: IDX_turn_inputs_turn_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: turn_id
+        indexName: IDX_turn_inputs_turn_id
+        tableName: turn_inputs
+- changeSet:
+    id: v2-create-index-fk_human_scores_model_response
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: human_scores
+              indexName: fk_human_scores_model_response
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_response_id
+        indexName: fk_human_scores_model_response
+        tableName: human_scores
+- changeSet:
+    id: v2-create-index-fk_pointwise_eval_score_model_response
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pointwise_heuristic_evaluation_score
+              indexName: fk_pointwise_eval_score_model_response
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: model_response_id
+        indexName: fk_pointwise_eval_score_model_response
+        tableName: pointwise_heuristic_evaluation_score
+- changeSet:
+    id: v2-create-index-fk_pointwise_eval_score_pointwise_heuristic
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pointwise_heuristic_evaluation_score
+              indexName: fk_pointwise_eval_score_pointwise_heuristic
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: pointwise_heuristic_id
+        indexName: fk_pointwise_eval_score_pointwise_heuristic
+        tableName: pointwise_heuristic_evaluation_score
+- changeSet:
+    id: v2-create-index-fk_pointwise_eval_score_user
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: pointwise_heuristic_evaluation_score
+              indexName: fk_pointwise_eval_score_user
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: fk_pointwise_eval_score_user
+        tableName: pointwise_heuristic_evaluation_score
+- changeSet:
+    id: v2-create-index-IDX_sxs_human_feedback_pair_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_human_feedback
+              indexName: IDX_sxs_human_feedback_pair_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: pair_id
+        indexName: IDX_sxs_human_feedback_pair_id
+        tableName: sxs_human_feedback
+- changeSet:
+    id: v2-create-index-IDX_sxs_human_feedback_project_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_human_feedback
+              indexName: IDX_sxs_human_feedback_project_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: project_id
+        indexName: IDX_sxs_human_feedback_project_id
+        tableName: sxs_human_feedback
+- changeSet:
+    id: v2-create-index-IDX_sxs_human_feedback_chat_turn_a
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_human_feedback
+              indexName: IDX_sxs_human_feedback_chat_turn_a
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_turn_a
+        indexName: IDX_sxs_human_feedback_chat_turn_a
+        tableName: sxs_human_feedback
+- changeSet:
+    id: v2-create-index-IDX_sxs_human_feedback_chat_turn_b
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_human_feedback
+              indexName: IDX_sxs_human_feedback_chat_turn_b
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: chat_turn_b
+        indexName: IDX_sxs_human_feedback_chat_turn_b
+        tableName: sxs_human_feedback
+- changeSet:
+    id: v2-create-index-IDX_sxs_human_feedback_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: sxs_human_feedback
+              indexName: IDX_sxs_human_feedback_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: IDX_sxs_human_feedback_user_id
+        tableName: sxs_human_feedback
+- changeSet:
+    id: v2-create-index-idx_container_user_id
+    author: stax
+    preConditions:
+      - onFail: MARK_RAN
+      - not:
+          - indexExists:
+              tableName: evaluation_container
+              indexName: idx_container_user_id
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: user_id
+        indexName: idx_container_user_id
+        tableName: evaluation_container
