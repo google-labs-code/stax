@@ -62,7 +62,7 @@ export function middleware(request: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   if (!isDev) {
     requestHeaders.set(
-      "Content-Security-Policy-Report-Only",
+      "Content-Security-Policy",
       contentSecurityPolicyHeaderValue,
     );
   }
@@ -74,7 +74,7 @@ export function middleware(request: NextRequest) {
   });
   if (!isDev) {
     response.headers.set(
-      "Content-Security-Policy-Report-Only",
+      "Content-Security-Policy",
       contentSecurityPolicyHeaderValue,
     );
   }

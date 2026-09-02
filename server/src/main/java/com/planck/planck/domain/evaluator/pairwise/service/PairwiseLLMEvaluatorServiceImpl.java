@@ -71,13 +71,7 @@ public class PairwiseLLMEvaluatorServiceImpl implements PairwiseLLMEvaluatorServ
   @Override
   public PairwiseLLMEvaluatorResponseDTO getEvaluatorById(User user, String evaluatorId) {
     log.info("Get pairwise evaluator by evaluatorId:: {} ", evaluatorId);
-    PairwiseLLMEvaluator pairwiseLlmEvaluator =
-        pairwiseLlmEvaluatorRepository
-            .findById(evaluatorId)
-            .orElseThrow(
-                () ->
-                    new NotFoundException(
-                        "pairwise evaluator: " + evaluatorId + " does not exists"));
+    PairwiseLLMEvaluator pairwiseLlmEvaluator = getAndValidateExistingEvaluator(evaluatorId, user);
     return new PairwiseLLMEvaluatorResponseDTO(pairwiseLlmEvaluator);
   }
 
@@ -97,7 +91,7 @@ public class PairwiseLLMEvaluatorServiceImpl implements PairwiseLLMEvaluatorServ
   @Override
   public PairwiseLLMEvaluatorResponseDTO updatePairwiseLLMEvaluator(
       User user, String evaluatorId, PairwiseLLMEvaluatorRequestDTO request) {
-    PairwiseLLMEvaluator evaluator = getAndValidateExistingEvaluator(evaluatorId);
+    PairwiseLLMEvaluator evaluator = getAndValidateExistingEvaluator(evaluatorId, user);
     validateSystemEvaluator(evaluator);
 
     if (request.getName() != null && !evaluator.getName().equals(request.getName())) {
@@ -133,7 +127,7 @@ public class PairwiseLLMEvaluatorServiceImpl implements PairwiseLLMEvaluatorServ
 
   @Override
   public void removePairwiseLLMEvaluatorById(User user, String evaluatorId) {
-    PairwiseLLMEvaluator evaluator = getAndValidateExistingEvaluator(evaluatorId);
+    PairwiseLLMEvaluator evaluator = getAndValidateExistingEvaluator(evaluatorId, user);
     validateSystemEvaluator(evaluator);
 
     if (pairwiseScoreRepository.existsByEvaluatorId(evaluator.getId(), user.getId())) {
@@ -183,11 +177,19 @@ public class PairwiseLLMEvaluatorServiceImpl implements PairwiseLLMEvaluatorServ
     evaluator.setInputs(modelInputs);
   }
 
-  private PairwiseLLMEvaluator getAndValidateExistingEvaluator(String evaluatorId) {
-    return pairwiseLlmEvaluatorRepository
-        .findById(evaluatorId)
-        .orElseThrow(
-            () -> new NotFoundException("Pairwise evaluator: " + evaluatorId + " does not exists"));
+  private PairwiseLLMEvaluator getAndValidateExistingEvaluator(String evaluatorId, User user) {
+    PairwiseLLMEvaluator evaluator =
+        pairwiseLlmEvaluatorRepository
+            .findById(evaluatorId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(
+                        "Pairwise evaluator: " + evaluatorId + " does not exists"));
+    if (evaluator.getType() != ScopeType.SYSTEM
+        && (evaluator.getUser() == null || !evaluator.getUser().getId().equals(user.getId()))) {
+      throw new NotFoundException("Pairwise evaluator: " + evaluatorId + " does not exists");
+    }
+    return evaluator;
   }
 
   private Model validateAndGetModel(User user, String modelId) {

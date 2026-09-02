@@ -106,8 +106,11 @@ module "cloud_run_backend" {
       value = module.cloudsql_mysql_instance.database_user_name
     },
     {
-      name  = "JDBC_DATABASE_PASSWORD",
-      value = random_password.db_user_password.result
+      name = "JDBC_DATABASE_PASSWORD",
+      value_from_secret = {
+        secret  = google_secret_manager_secret.db_password.secret_id
+        version = "latest"
+      }
     },
     {
       name = "JDBC_DATABASE_URL",

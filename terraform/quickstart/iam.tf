@@ -47,12 +47,6 @@ resource "google_project_iam_binding" "iam_id_token_creator" {
   members = [local.member, "serviceAccount:${local.service_account}"]
 }
 
-resource "google_project_iam_member" "run_admin" {
-  project = data.google_project.default_project.project_id
-  role    = "roles/run.admin"
-
-  member = "serviceAccount:${local.service_account}"
-}
 
 resource "google_project_iam_member" "compute_service_agent" {
   project = data.google_project.default_project.project_id

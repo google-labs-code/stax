@@ -55,7 +55,7 @@ export const getErrorNotificationConfig = (
   withCloseButton: true,
   icon: <MaterialIcon name="warning" size={20} className="text-darkRed" />,
   autoClose,
-  message: <div dangerouslySetInnerHTML={{ __html: error }} />,
+  message: <div>{error}</div>,
   color: "transparent",
   classNames: {
     description: "text-darkRed text-body-14",

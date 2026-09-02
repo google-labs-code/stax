@@ -34,6 +34,7 @@ import com.planck.planck.exceptions.UserQuotaExceededException;
 import com.planck.planck.util.EncryptionUtil;
 import com.planck.planck.util.ObjectMapperUtil;
 import com.planck.planck.util.PlanckConstants;
+import com.planck.planck.util.UrlSecurityUtil;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -341,6 +342,8 @@ public class ModelServiceImpl implements ModelService {
   }
 
   private void validateCustomEndpointInput(CustomEndpointRegistrationRequest request, User user) {
+    UrlSecurityUtil.validateExternalUrl(request.getUrl());
+
     // Check if the user has quota to register a new model
     int count = modelRepository.countModelsByUserAndType(user, ModelType.USER);
     if (count >= NUM_OF_MODELS_PER_USER) {
@@ -361,6 +364,7 @@ public class ModelServiceImpl implements ModelService {
   private void updateCustomModel(
       String apiKey, String apiUrl, Map<String, String> customHeaders, Model model) {
     if (apiUrl != null) {
+      UrlSecurityUtil.validateExternalUrl(apiUrl);
       model.setUrl(apiUrl);
     }
     Map<String, Object> properties = ObjectMapperUtil.convertJsonStringToMap(model.getProperties());

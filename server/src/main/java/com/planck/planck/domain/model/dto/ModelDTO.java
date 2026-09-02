@@ -66,7 +66,7 @@ public class ModelDTO {
   @JsonProperty("url")
   private String url;
 
-  @Schema(description = "The tag associated with the model", example = "gemini-2.0-flash (SYSTEM)")
+  @Schema(description = "The tag associated with the model", example = "gemini-2.5-flash (SYSTEM)")
   @JsonProperty("tag")
   private String modelTag;
 

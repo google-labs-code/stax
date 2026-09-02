@@ -22,6 +22,29 @@ resource "random_password" "db_user_password" {
   # removes % and & which are special characters in uri
   override_special = "!@#$*()-_=+[]{}<>:?"
 }
+
+resource "google_secret_manager_secret" "db_password" {
+  project   = local.project_id
+  secret_id = "db-password"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "db_password" {
+  secret      = google_secret_manager_secret.db_password.id
+  secret_data = random_password.db_user_password.result
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
+resource "google_secret_manager_secret_iam_member" "secretaccess_db_password" {
+  secret_id = google_secret_manager_secret.db_password.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${local.service_account}"
+}
 ################################ root_password ####################################
 resource "random_password" "db_root_password" {
   length      = 16

@@ -18,7 +18,9 @@ package com.planck.planck.util;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.SecureRandom;
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,10 @@ public class EncryptionUtil {
 
   private static final String EMPTY = "";
   private static final String ALGORITHM = "AES";
+  private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+  private static final String LEGACY_TRANSFORMATION = "AES/ECB/PKCS5Padding";
+  private static final int GCM_TAG_LENGTH = 128;
+  private static final int GCM_IV_LENGTH = 12;
 
   private static String getSecretKey() {
     String secretKey = PlanckEnvironmentUtil.getProperty("aes.secretKey");
@@ -43,36 +49,59 @@ public class EncryptionUtil {
   }
 
   public static String decrypt(String encryptedValue) {
-    log.info("Decryption Start");
-    Key key;
+    if (encryptedValue == null || encryptedValue.trim().isEmpty()) {
+      return EMPTY;
+    }
     try {
-      key = generateKey();
-      Cipher cipher = Cipher.getInstance(ALGORITHM);
-      cipher.init(Cipher.DECRYPT_MODE, key);
+      Key key = generateKey();
       byte[] decodedValue = Base64.decodeBase64(encryptedValue);
-      byte[] decValue = cipher.doFinal(decodedValue);
-      log.info("Decryption End");
-      return new String(decValue);
+      if (decodedValue.length < GCM_IV_LENGTH) {
+        return decryptLegacy(decodedValue, key);
+      }
+      try {
+        GCMParameterSpec spec =
+            new GCMParameterSpec(GCM_TAG_LENGTH, decodedValue, 0, GCM_IV_LENGTH);
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        cipher.init(Cipher.DECRYPT_MODE, key, spec);
+        int len = decodedValue.length - GCM_IV_LENGTH;
+        byte[] decValue = cipher.doFinal(decodedValue, GCM_IV_LENGTH, len);
+        return new String(decValue, StandardCharsets.UTF_8);
+      } catch (Exception gcmException) {
+        return decryptLegacy(decodedValue, key);
+      }
     } catch (Exception e) {
-      log.error("Error while Decrypting.Error is ::", e);
+      log.error("Error while Decrypting. Error is ::", e);
       return EMPTY;
     }
   }
 
+  private static String decryptLegacy(byte[] decodedValue, Key key) throws Exception {
+    Cipher cipher = Cipher.getInstance(LEGACY_TRANSFORMATION);
+    cipher.init(Cipher.DECRYPT_MODE, key);
+    byte[] decValue = cipher.doFinal(decodedValue);
+    return new String(decValue, StandardCharsets.UTF_8);
+  }
+
   private static Key generateKey() throws Exception {
-    log.info("Generate Key Start");
     byte[] keyBytes = getSecretKey().getBytes(StandardCharsets.UTF_8);
-    log.info("Generate Key End");
     return new SecretKeySpec(keyBytes, ALGORITHM);
   }
 
   public static String encrypt(String valueToEnc) throws Exception {
-    log.info("Encryption Start");
+    if (valueToEnc == null) {
+      return EMPTY;
+    }
     Key key = generateKey();
-    Cipher cipher = Cipher.getInstance(ALGORITHM);
-    cipher.init(Cipher.ENCRYPT_MODE, key);
-    byte[] encValue = cipher.doFinal(valueToEnc.getBytes());
-    log.info("Encryption End");
-    return Base64.encodeBase64String(encValue);
+    byte[] iv = new byte[GCM_IV_LENGTH];
+    new SecureRandom().nextBytes(iv);
+    GCMParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+    Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+    cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
+    byte[] input = valueToEnc.getBytes(StandardCharsets.UTF_8);
+    byte[] encValue = cipher.doFinal(input);
+    byte[] combined = new byte[iv.length + encValue.length];
+    System.arraycopy(iv, 0, combined, 0, iv.length);
+    System.arraycopy(encValue, 0, combined, iv.length, encValue.length);
+    return Base64.encodeBase64String(combined);
   }
 }

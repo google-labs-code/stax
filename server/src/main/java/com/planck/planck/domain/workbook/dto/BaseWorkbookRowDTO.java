@@ -93,16 +93,16 @@ public abstract class BaseWorkbookRowDTO implements Taggable {
   private String modelId;
 
   @JsonProperty("model_name")
-  @Schema(description = "Name of the model", example = "gemini-2.0-flash")
+  @Schema(description = "Name of the model", example = "gemini-2.5-flash")
   private String modelName;
 
   @Deprecated
   @JsonProperty("model_label")
-  @Schema(description = "Label of the model", example = "Gemini 2.0 Flash")
+  @Schema(description = "Label of the model", example = "Gemini 2.5 Flash")
   private String modelLabel;
 
   @JsonProperty("model_nickname")
-  @Schema(description = "Nickname of the model", example = "Gemini 2.0 Flash")
+  @Schema(description = "Nickname of the model", example = "Gemini 2.5 Flash")
   private String modelNickname;
 
   @JsonProperty("model_provider")

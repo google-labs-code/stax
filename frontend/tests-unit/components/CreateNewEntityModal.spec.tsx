@@ -168,7 +168,7 @@ describe("CreateNewEntityModal", () => {
         expect.objectContaining({
           message: expect.objectContaining({
             props: expect.objectContaining({
-              dangerouslySetInnerHTML: { __html: "Creation failed" },
+              children: "Creation failed",
             }),
           }),
         }),

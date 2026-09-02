@@ -64,10 +64,9 @@ export default function TermsOfService({
             <div
               id="tos-welcome-content"
               className="text-body-14 p-4 whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: content,
-              }}
-            />
+            >
+              {content}
+            </div>
           </ScrollAreaAutosize>
           <Divider />
           <Stack className="">

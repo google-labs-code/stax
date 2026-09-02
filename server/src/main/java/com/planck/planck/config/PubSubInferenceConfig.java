@@ -293,7 +293,7 @@ public class PubSubInferenceConfig {
   @ServiceActivator(inputChannel = QueueConstants.GEMINI_INFERENCE_SUB_CHANNEL)
   public MessageHandler messageReceiverGeminiInference() {
     return message -> {
-      log.info("Message arrived! Payload: " + new String((byte[]) message.getPayload()));
+      log.info("Message arrived! Message ID: {}", message.getHeaders().getId());
       String inferenceDTO = new String((byte[]) message.getPayload());
       BasicAcknowledgeablePubsubMessage originalMessage =
           message
@@ -607,7 +607,7 @@ public class PubSubInferenceConfig {
   @ServiceActivator(inputChannel = QueueConstants.GEMINI_INFERENCE_SUB_CHANNEL_BULK)
   public MessageHandler messageReceiverGeminiInferenceBulk() {
     return message -> {
-      log.info("Bulk message arrived! Payload: " + new String((byte[]) message.getPayload()));
+      log.info("Bulk message arrived! Message ID: {}", message.getHeaders().getId());
       String inferenceDTO = new String((byte[]) message.getPayload());
       BasicAcknowledgeablePubsubMessage originalMessage =
           message

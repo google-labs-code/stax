@@ -91,8 +91,8 @@ class ModelServiceTest {
     systemModel.setLabel("System Model A");
     systemModel.setType(ModelType.SYSTEM);
     systemModel.setProvider(ModelProvider.GOOGLE);
-    systemModel.setName("Gemini Pro");
-    systemModel.setVersion("gemini-pro");
+    systemModel.setName("Gemini 2.5 Flash");
+    systemModel.setVersion("gemini-2.5-flash");
     systemModel.setDescriptors("{\"temperature\": 0.7}");
     systemModel.setProperties("{\"temperature\": 0.7}");
     systemModel.setDeprecated(false);

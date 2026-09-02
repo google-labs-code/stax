@@ -34,6 +34,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +57,7 @@ public class EvaluationController {
   @ApiResponse(responseCode = "200", description = "Evaluation created successfully")
   @ApiResponse(responseCode = "400", description = "Invalid input")
   @PostMapping("/chat-turns")
-  // @PreAuthorize("hasPermission(#projectId, 'PROJECT', 'write')")
+  @PreAuthorize("hasPermission(#projectId, 'PROJECT', 'write')")
   public ResponseEntity<?> createChatTurnsEvaluation(
       @Valid @RequestBody ChatTurnsEvaluationRequest request,
       @PathVariable("project_id") String projectId,

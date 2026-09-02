@@ -102,6 +102,11 @@ describe("SignInPage", () => {
         const notificationArg = showNotifications.mock.calls[0][0];
         if (
           React.isValidElement(notificationArg.message) &&
+          notificationArg.message.props?.children
+        ) {
+          expect(notificationArg.message.props.children).toBe("test-error");
+        } else if (
+          React.isValidElement(notificationArg.message) &&
           notificationArg.message.props?.dangerouslySetInnerHTML
         ) {
           expect(
