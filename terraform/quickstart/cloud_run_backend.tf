@@ -17,7 +17,7 @@ module "cloud_run_backend" {
   project_id = local.project_id
   region     = local.region
 
-  cloud_run_image             = "${local.region}-docker.pkg.dev/${local.project_id}/stax-backend"
+  cloud_run_image             = "${local.region}-docker.pkg.dev/${local.project_id}/${var.artifact_registry_repo}/stax-backend"
   cloud_run_service_name      = "stax-backend"
   cloud_run_cpu_limit         = 4
   cloud_run_memory_limit      = "16Gi"
@@ -64,7 +64,7 @@ module "cloud_run_backend" {
     },
     {
       name  = "GCP_BUCKET_ID",
-      value = "stax-prod-project-bucket"
+      value = var.gcs_bucket_name
     },
     # This is needed for using Google OAuth authentication. As a prerequisite, configure a Google oauth client.
     # TODO: Uncomment the following lines and replace with the real oauth client id here

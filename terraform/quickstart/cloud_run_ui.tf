@@ -19,7 +19,7 @@ module "ui_service" {
   region     = local.region
 
   cloud_run_service_name = "stax-ui"
-  cloud_run_image        = "${local.region}-docker.pkg.dev/${local.project_id}/stax-ui"
+  cloud_run_image        = "${local.region}-docker.pkg.dev/${local.project_id}/${var.artifact_registry_repo}/stax-ui"
   cloud_run_cpu_limit    = 4
   cloud_run_memory_limit = "2Gi"
   allow_unauthenticated  = true

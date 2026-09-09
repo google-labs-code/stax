@@ -47,6 +47,7 @@ The backend handles the core evaluation logic and integrates with the GCP Pub/Su
 ### Local Setup & Execution
 1.  **Configure Environment:**
     ```bash
+    cd server
     export AES_SECRET_KEY=defaultaessecret
     export TOKEN_SIGNING_KEY=default_token_signing_key
     export JDBC_DATABASE_URL="jdbc:mysql://localhost:3306/stax_db"
@@ -74,10 +75,11 @@ A React-based UI built with Mantine and Tailwind CSS for interacting with the St
 ### Setup & Execution
 1.  **Install Dependencies:**
     ```bash
+    cd frontend
     npm install
     ```
 2.  **Environment Configuration:**
-    * Copy `.env.template` to `.env.local`.
+    * Copy `.env.template` to `.env.local` and set `NEXT_PUBLIC_API_BASE_URL` (e.g. `http://localhost:8080`) and `NEXT_PUBLIC_APP_BASE_URL` (e.g. `http://localhost:3000`).
     * Add `NEXT_PUBLIC_GOOGLE_CLIENT_ID` if using authentication.
 3.  **Run Development Server:**
     ```bash
@@ -98,7 +100,8 @@ A React-based UI built with Mantine and Tailwind CSS for interacting with the St
 ├── terraform/         # Infrastructure as Code (GCP)
 │   ├── modules/       # Reusable GCP resource definitions
 │   └── quickstart/    # Main deployment entry point
-├── backend/           # Spring Boot Java Server
+├── server/            # Spring Boot Java Server
 │   └── src/           # Evaluation logic and API routes
 └── frontend/          # Next.js & React Web App
-    └── src/           # UI Components and Mantine hooks
+    ├── app/           # App routes and page components
+    └── components/    # Reusable UI components

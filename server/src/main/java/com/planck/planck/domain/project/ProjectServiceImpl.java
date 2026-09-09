@@ -238,6 +238,9 @@ public class ProjectServiceImpl implements ProjectService {
 
   private List<ProjectDTO> enrichProjectsWithFields(
       List<Project> projects, Set<String> includeFields) {
+    if (projects == null || projects.isEmpty()) {
+      return List.of();
+    }
     List<String> projectIds = projects.stream().map(Project::getId).toList();
     User user = projects.get(0).getUser();
 
