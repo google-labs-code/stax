@@ -13,8 +13,7 @@
 # limitations under the License.
 
 provider "google" {
-  # TODO: Prerequisite - change this to your project ID.
-  project = "planck-opensource-test-769621"
+  project = var.project_id != "" ? var.project_id : null
 }
 
 data "google_project" "default_project" {}
@@ -22,6 +21,6 @@ data "google_compute_default_service_account" "default" {}
 
 locals {
   project_id      = data.google_project.default_project.project_id
-  region          = "us-central1"
+  region          = var.region
   service_account = data.google_compute_default_service_account.default.email
 }

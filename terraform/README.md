@@ -65,11 +65,11 @@ You can use GCP Cloud Run CLI to build and push the container images for UI serv
 export PROJECT_ID=<your project id>
 export REGION=us-central1
 
-# From the backend java directory using Dockerfile.
-gcloud run deploy stax-ui --project=${PROJECT_ID} --source . --region=${REGION}
-
-# From the UI directory. Make sure you have set all the NEXT_PUBLIC_* environment variables. We use the `gcloud run deploy` to build and push the container image.
+# From the backend java directory (server/) using Dockerfile.
 gcloud run deploy stax-backend --project=${PROJECT_ID} --source . --region=${REGION}
+
+# From the UI directory (frontend/). Make sure you have set all the NEXT_PUBLIC_* environment variables. We use the `gcloud run deploy` to build and push the container image.
+gcloud run deploy stax-ui --project=${PROJECT_ID} --source . --region=${REGION}
 ```
 
 After these steps, the images will be present in the following locations.

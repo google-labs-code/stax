@@ -13,38 +13,54 @@
 # limitations under the License.
 
 locals {
-  # TODO: change this to your email
-  # member                  = "user:you@gmail.com"
-  member                  = "user:xinyij@google.com"
+  admin_member            = var.admin_email != "" ? (startswith(var.admin_email, "user:") || startswith(var.admin_email, "serviceAccount:") || startswith(var.admin_email, "group:") ? var.admin_email : "user:${var.admin_email}") : null
   default_service_account = "serviceAccount:${data.google_project.default_project.number}-compute@developer.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "admin" {
+  count   = local.admin_member != null ? 1 : 0
   project = data.google_project.default_project.project_id
-  role    = "roles/admin"
-
-  member = local.member
+  role    = "roles/resourcemanager.projectIamAdmin"
+  member  = local.admin_member
 }
 
-resource "google_project_iam_binding" "storage_admin" {
+resource "google_project_iam_member" "storage_admin_user" {
+  count   = local.admin_member != null ? 1 : 0
   project = data.google_project.default_project.project_id
   role    = "roles/storage.objectAdmin"
-
-  members = [local.member, "serviceAccount:${local.service_account}"]
+  member  = local.admin_member
 }
 
-resource "google_project_iam_binding" "sql_client" {
+resource "google_project_iam_member" "storage_admin_sa" {
+  project = data.google_project.default_project.project_id
+  role    = "roles/storage.objectAdmin"
+  member  = "serviceAccount:${local.service_account}"
+}
+
+resource "google_project_iam_member" "sql_client_user" {
+  count   = local.admin_member != null ? 1 : 0
   project = data.google_project.default_project.project_id
   role    = "roles/cloudsql.client"
-
-  members = [local.member, "serviceAccount:${local.service_account}"]
+  member  = local.admin_member
 }
 
-resource "google_project_iam_binding" "iam_id_token_creator" {
+resource "google_project_iam_member" "sql_client_sa" {
+  project = data.google_project.default_project.project_id
+  role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${local.service_account}"
+}
+
+resource "google_project_iam_member" "iam_id_token_creator_user" {
+  count   = local.admin_member != null ? 1 : 0
   project = data.google_project.default_project.project_id
   role    = "roles/iam.serviceAccountOpenIdTokenCreator"
+  member  = local.admin_member
+}
 
-  members = [local.member, "serviceAccount:${local.service_account}"]
+resource "google_project_iam_member" "iam_id_token_creator_sa" {
+  project = data.google_project.default_project.project_id
+  role    = "roles/iam.serviceAccountOpenIdTokenCreator"
+  member  = "serviceAccount:${local.service_account}"
 }
 
 
