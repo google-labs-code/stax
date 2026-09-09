@@ -88,6 +88,9 @@ export default function ProjectsTable() {
       setAllProjects(res?.["projects"] || []);
       setIsLoadingProjects(false);
     },
+    onError: () => {
+      setIsLoadingProjects(false);
+    },
   });
 
   useEffect(() => {

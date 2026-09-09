@@ -14,7 +14,7 @@
     "test:watch": "jest --watch",
     "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "githooks:init": "cp git-hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+    "githooks:init": "cp git-hooks/pre-commit ../.git/hooks/pre-commit && chmod +x ../.git/hooks/pre-commit"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

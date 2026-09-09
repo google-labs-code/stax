@@ -16,7 +16,7 @@
 
 export const MainConfig = {
   isPlaygroundStreamingEnabled: false, // if you want streaming enabled for pointwise set to true
-  isAuthEnabled: true, // Enable the authentication and bearer token passing to backend API
+  isAuthEnabled: process.env.NEXT_PUBLIC_AUTH_ENABLED === "true", // Enable the authentication and bearer token passing to backend API
   isPlaygroundAttachmentEnabled: false, // Not fully developed yet
   isEvaluatorUndoRedoEnabled: false, // Not fully developed yet
 };

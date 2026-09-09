@@ -16,6 +16,7 @@
 
 "use client";
 
+import { MainConfig } from "@/config/config";
 import { JWT_TOKEN_KEY } from "@/config/constants";
 import { routes } from "@/config/routes";
 import LocalStorage from "@/utils/LocalStorage";
@@ -28,7 +29,7 @@ export default function RootPage() {
 
   useEffect(() => {
     const hasJwtToken = LocalStorage.get(JWT_TOKEN_KEY);
-    if (hasJwtToken) {
+    if (!MainConfig.isAuthEnabled || hasJwtToken) {
       router.push(routes.projects);
     } else {
       router.push(routes.signin);
