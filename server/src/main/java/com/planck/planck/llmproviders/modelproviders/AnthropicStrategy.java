@@ -53,7 +53,8 @@ public class AnthropicStrategy extends ChatProviderStrategy {
 
   @SuppressWarnings("unchecked")
   private AnthropicChatModel buildClientWithOptions() {
-    var optionsBuilder = AnthropicChatModel.builder().apiKey(apiKey).modelName(modelName);
+    String resolvedModel = resolveModelName(modelName);
+    var optionsBuilder = AnthropicChatModel.builder().apiKey(apiKey).modelName(resolvedModel);
 
     optionsBuilder.maxRetries(0);
     if (this.properties.get("stop_sequences") != null
@@ -73,8 +74,14 @@ public class AnthropicStrategy extends ChatProviderStrategy {
       optionsBuilder.topK(Integer.valueOf(this.properties.get("top_k").toString()));
     }
 
-    if (this.properties.get("max_tokens") != null) {
-      optionsBuilder.maxTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
+    Object maxTokens =
+        this.properties.get("max_output_tokens") != null
+            ? this.properties.get("max_output_tokens")
+            : this.properties.get("max_tokens");
+    if (maxTokens != null) {
+      optionsBuilder.maxTokens(Integer.valueOf(maxTokens.toString()));
+    } else {
+      optionsBuilder.maxTokens(4096);
     }
 
     return optionsBuilder.build();
@@ -82,7 +89,9 @@ public class AnthropicStrategy extends ChatProviderStrategy {
 
   @SuppressWarnings("unchecked")
   private StreamingChatModel buildStreamingClientWithOptions() {
-    var optionsBuilder = AnthropicStreamingChatModel.builder().apiKey(apiKey).modelName(modelName);
+    String resolvedModel = resolveModelName(modelName);
+    var optionsBuilder =
+        AnthropicStreamingChatModel.builder().apiKey(apiKey).modelName(resolvedModel);
 
     if (this.properties.get("stop_sequences") != null
         && !((List<String>) this.properties.get("stop_sequences")).isEmpty()) {
@@ -101,10 +110,45 @@ public class AnthropicStrategy extends ChatProviderStrategy {
       optionsBuilder.topK(Integer.valueOf(this.properties.get("top_k").toString()));
     }
 
-    if (this.properties.get("max_tokens") != null) {
-      optionsBuilder.maxTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
+    Object maxTokens =
+        this.properties.get("max_output_tokens") != null
+            ? this.properties.get("max_output_tokens")
+            : this.properties.get("max_tokens");
+    if (maxTokens != null) {
+      optionsBuilder.maxTokens(Integer.valueOf(maxTokens.toString()));
+    } else {
+      optionsBuilder.maxTokens(4096);
     }
 
     return optionsBuilder.build();
+  }
+
+  private String resolveModelName(String name) {
+    if (name == null || name.isBlank()) {
+      return "claude-3-5-sonnet-20241022";
+    }
+    switch (name) {
+      case "claude-3.7-sonnet":
+      case "claude-3-7-sonnet":
+        return "claude-3-7-sonnet-20250219";
+      case "claude-3.5-sonnet":
+      case "claude-3-5-sonnet":
+        return "claude-3-5-sonnet-20241022";
+      case "claude-3.5-haiku":
+      case "claude-3-5-haiku":
+        return "claude-3-5-haiku-20241022";
+      case "claude-3-opus":
+        return "claude-3-opus-20240229";
+      case "claude-3-haiku":
+        return "claude-3-haiku-20240307";
+      case "claude-3-sonnet":
+        return "claude-3-sonnet-20240229";
+      case "claude-opus-4-20250514":
+        return "claude-opus-4";
+      case "claude-sonnet-4-20250514":
+        return "claude-sonnet-4";
+      default:
+        return name;
+    }
   }
 }

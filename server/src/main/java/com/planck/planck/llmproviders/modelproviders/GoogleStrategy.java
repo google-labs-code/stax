@@ -55,16 +55,26 @@ public class GoogleStrategy extends ChatProviderStrategy {
     Content systemInstruction = null;
     List<Content> contents = new ArrayList<>();
     for (Prompt prompt : prompts) {
-      if (prompt.getRole() == InputRole.SYSTEM && prompts.size() > 1) {
-        systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+      if (prompt.getRole() == InputRole.SYSTEM || prompt.getRole() == InputRole.DEVELOPER) {
+        if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+          systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+        }
         continue;
       }
-      contents.add(Content.fromParts(Part.fromText(prompt.getText())));
+      if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+        String role = prompt.getRole() == InputRole.ASSISTANT ? "model" : "user";
+        contents.add(
+            Content.builder().role(role).parts(List.of(Part.fromText(prompt.getText()))).build());
+      }
+    }
+    if (contents.isEmpty()) {
+      contents.add(Content.builder().role("user").parts(List.of(Part.fromText(" "))).build());
     }
 
     GenerateContentConfig config = getGenerationConfig(systemInstruction);
 
-    return getResponseWithRetry(client, model.getName(), contents, config);
+    String targetModel = resolveModelName(model.getName());
+    return getResponseWithRetry(client, targetModel, contents, config);
   }
 
   @Override
@@ -74,18 +84,28 @@ public class GoogleStrategy extends ChatProviderStrategy {
     Content systemInstruction = null;
     List<Content> contents = new ArrayList<>();
     for (Prompt prompt : prompts) {
-      if (prompt.getRole() == InputRole.SYSTEM && prompts.size() > 1) {
-        systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+      if (prompt.getRole() == InputRole.SYSTEM || prompt.getRole() == InputRole.DEVELOPER) {
+        if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+          systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+        }
         continue;
       }
-      contents.add(Content.fromParts(Part.fromText(prompt.getText())));
+      if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+        String role = prompt.getRole() == InputRole.ASSISTANT ? "model" : "user";
+        contents.add(
+            Content.builder().role(role).parts(List.of(Part.fromText(prompt.getText()))).build());
+      }
+    }
+    if (contents.isEmpty()) {
+      contents.add(Content.builder().role("user").parts(List.of(Part.fromText(" "))).build());
     }
     GenerateContentConfig config = getGenerationConfig(systemInstruction);
 
     long startTime = System.currentTimeMillis();
     ResponseStream<GenerateContentResponse> streamResponse;
+    String targetModel = resolveModelName(model.getName());
     try {
-      streamResponse = client.models.generateContentStream(model.getName(), contents, config);
+      streamResponse = client.models.generateContentStream(targetModel, contents, config);
     } catch (Exception e) {
       throw new LlmProviderException(
           "Error while sending request to Gemini API: " + e.getMessage(), e);
@@ -149,7 +169,10 @@ public class GoogleStrategy extends ChatProviderStrategy {
                   latencyMs.set(System.currentTimeMillis() - startTime);
                   return new RetryUtils.StatusResult<>(response, HttpStatus.SC_OK);
                 } catch (ApiException e) {
-                  return new RetryUtils.StatusResult<>(null, e.code());
+                  return new RetryUtils.StatusResult<>(null, e.code(), e.getMessage());
+                } catch (Exception e) {
+                  return new RetryUtils.StatusResult<>(
+                      null, HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                 }
               },
               defaultRetryProperties);
@@ -208,8 +231,24 @@ public class GoogleStrategy extends ChatProviderStrategy {
       configBuilder.responseLogprobs(true);
     }
 
-    configBuilder.thinkingConfig(ThinkingConfig.builder().includeThoughts(true).build());
+    String targetModel = resolveModelName(modelName);
+    if (targetModel != null && targetModel.contains("thinking")) {
+      configBuilder.thinkingConfig(ThinkingConfig.builder().includeThoughts(true).build());
+    }
     return configBuilder.build();
+  }
+
+  private String resolveModelName(String name) {
+    if (name == null || name.isBlank()) {
+      return "gemini-2.5-flash";
+    }
+    if (name.startsWith("gemini-2.0") || name.equals("gemini-flash") || name.equals("gemini-pro")) {
+      if (name.contains("lite")) {
+        return "gemini-2.5-flash-lite";
+      }
+      return "gemini-2.5-flash";
+    }
+    return name;
   }
 
   private Client buildClient() {

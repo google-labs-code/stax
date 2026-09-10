@@ -63,9 +63,9 @@ public abstract class OpenAiCommonStrategy extends ChatProviderStrategy {
     if (this.properties.get("top_p") != null)
       optionsBuilder.topP(Double.valueOf(this.properties.get("top_p").toString()));
 
-    if (this.properties.get("max_completion_tokens") != null) {
-      optionsBuilder.maxCompletionTokens(
-          Integer.valueOf(this.properties.get("max_completion_tokens").toString()));
+    Integer maxTokens = resolveMaxTokens();
+    if (maxTokens != null) {
+      optionsBuilder.maxCompletionTokens(maxTokens);
     }
     optionsBuilder.returnThinking(true);
     return optionsBuilder;
@@ -81,12 +81,31 @@ public abstract class OpenAiCommonStrategy extends ChatProviderStrategy {
     if (this.properties.get("top_p") != null)
       optionsBuilder.topP(Double.valueOf(this.properties.get("top_p").toString()));
 
-    if (this.properties.get("max_completion_tokens") != null) {
-      optionsBuilder.maxCompletionTokens(
-          Integer.valueOf(this.properties.get("max_completion_tokens").toString()));
+    Integer maxTokens = resolveMaxTokens();
+    if (maxTokens != null) {
+      optionsBuilder.maxCompletionTokens(maxTokens);
     }
     optionsBuilder.returnThinking(true);
     return optionsBuilder;
+  }
+
+  protected Integer resolveMaxTokens() {
+    Object val = this.properties.get("max_output_tokens");
+    if (val == null) val = this.properties.get("max_tokens");
+    if (val == null) val = this.properties.get("max_completion_tokens");
+    if (val != null) {
+      return Integer.valueOf(val.toString());
+    }
+    return null;
+  }
+
+  protected Double resolveFrequencyPenalty() {
+    Object val = this.properties.get("frequency_penalty");
+    if (val == null) val = this.properties.get("frequence_penalty");
+    if (val != null) {
+      return Double.valueOf(val.toString());
+    }
+    return null;
   }
 
   protected abstract OpenAiChatModel buildClientWithOptions();
