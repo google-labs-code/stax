@@ -27,12 +27,19 @@ import { GAevents } from "@/types";
 import logGAevent from "@/utils/logGAevent";
 import { Text, UnstyledButton } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
 import { CHAT_THUMBS, SIDE_BY_SIDE_EVAL_OPTIONS } from "../../consts";
 
 export default function OutputCardEvaluator() {
   const { projectState, isSideBySide } = useProjectContext();
+  const params = useParams<{ id: string }>();
+  const activeProjectId =
+    projectState?.projectId ||
+    projectState?.project?.project_id ||
+    (params?.id as string) ||
+    "";
   const { feedbackEvalId } = useHumanEvalsContext();
   const {
     outputs,
@@ -107,7 +114,7 @@ export default function OutputCardEvaluator() {
                 if (isSideBySide) {
                   const rating = thumb.value as HUMAN_SXS_RATING;
                   humanEvalSxSMutation.mutate({
-                    projectId: projectState?.project?.project_id || "",
+                    projectId: activeProjectId,
                     pairId,
                     rating:
                       rating && rating === humanEvaluator?.value

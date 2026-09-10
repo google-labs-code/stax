@@ -118,6 +118,12 @@ export const getProjectsQuery = async (params: GetProjectsParams = {}) => {
   )) as ProjectsDto;
 };
 
+export const getProjectByIdQuery = async (projectId: string) => {
+  return (await getRequest(
+    `${backendEndpoints.PROJECTS.INDEX}/${projectId}`,
+  )) as Project;
+};
+
 export const createProjectQuery = async (data: Project) =>
   (await postRequest(backendEndpoints.PROJECTS.INDEX, data)) as Project;
 
@@ -289,20 +295,28 @@ export const deleteModelQuery = async (id: string) => {
 export const inferenceChatCompletionQuery = async (
   payload: InferenceChatCompletionPayload,
   projectId: string,
-) =>
-  (await postRequest(
+) => {
+  if (!projectId) {
+    throw new Error("Cannot execute chat completion: Project ID is required.");
+  }
+  return (await postRequest(
     `inference/projects/${projectId}/${backendEndpoints.INFERENCE.QUICK_COMPARE_CHAT_COMPLETION}`,
     payload,
   )) as ChatCompletionResponse;
+};
 
 export const inferenceAllChatCompletionBulkQuery = async (
   payload: any,
   projectId: string,
-) =>
-  (await postRequest(
+) => {
+  if (!projectId) {
+    throw new Error("Cannot execute bulk inference: Project ID is required.");
+  }
+  return (await postRequest(
     `/inference/projects/${projectId}/bulk/all`,
     payload,
   )) as ChatCompletionResponse;
+};
 
 export const deleteUserDataQuery = () =>
   deleteRequest(backendEndpoints.AUTH.DELETE_USER_DATA);
@@ -656,21 +670,29 @@ export const getSxsProjectBulkExport = async (
 export const inferenceChatCompletionSxSQuery = async (
   payload: InferenceChatCompletionSxSPayload,
   projectId: string,
-) =>
-  (await postRequest(
+) => {
+  if (!projectId) {
+    throw new Error("Cannot execute SxS inference: Project ID is required.");
+  }
+  return (await postRequest(
     `sxs/${backendEndpoints.CONTAINERS}/${projectId}/inference`,
     payload,
   )) as ChatCompletionSxSResponse;
+};
 
 export const continueChatBSxSQuery = async (
   payload: ContinueChatBSxSQueryPayload,
   projectId: string,
   pairId: string,
-) =>
-  (await postRequest(
+) => {
+  if (!projectId) {
+    throw new Error("Cannot continue SxS chat: Project ID is required.");
+  }
+  return (await postRequest(
     `sxs/${backendEndpoints.CONTAINERS}/${projectId}/${pairId}/continue`,
     payload,
   )) as ChatCompletionSxSResponse;
+};
 
 export const uploadDatasetFileQuery = async (
   datasetId: string,
