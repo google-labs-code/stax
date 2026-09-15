@@ -23,7 +23,7 @@ import { usePlaygroundContext } from "@/hooks/usePlaygroundContext";
 import LocalStorage from "@/utils/LocalStorage";
 import { Button, Group, Modal, Text } from "@mantine/core";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 import { useProjectContext } from "../../../hooks/useProjectContext";
@@ -36,11 +36,17 @@ export default function PromptCleaningModal({
 }: PromptCleaningModalProps) {
   const hasSeen = LocalStorage.get(SHOW_PLAYGROUND_INFO_BAR);
   const { projectState } = useProjectContext();
+  const params = useParams<{ id: string }>();
+  const activeProjectId =
+    projectState?.projectId ||
+    projectState?.project?.project_id ||
+    (params?.id as string) ||
+    "";
   const { resetPlayground } = usePlaygroundContext();
   const router = useRouter();
   const onNavigateToProject = useCallback(() => {
-    router.push(`${routes.projects}/${projectState?.project?.project_id}`);
-  }, [router, projectState?.project?.project_id]);
+    router.push(`${routes.projects}/${activeProjectId}`);
+  }, [router, activeProjectId]);
 
   const handleClose = useCallback(() => {
     onClose();

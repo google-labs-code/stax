@@ -37,12 +37,15 @@ public class GrokStrategy extends OpenAiCommonStrategy {
   protected OpenAiChatModel buildClientWithOptions() {
     var optionsBuilder = getBuilderWithCommonOptions();
 
-    if (this.properties.get("max_tokens") != null)
-      optionsBuilder.maxTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
+    Integer maxTokens = resolveMaxTokens();
+    if (maxTokens != null) {
+      optionsBuilder.maxTokens(maxTokens);
+    }
 
-    if (this.properties.get("frequence_penalty") != null)
-      optionsBuilder.frequencyPenalty(
-          Double.valueOf(this.properties.get("frequence_penalty").toString()));
+    Double frequencyPenalty = resolveFrequencyPenalty();
+    if (frequencyPenalty != null) {
+      optionsBuilder.frequencyPenalty(frequencyPenalty);
+    }
 
     if (this.properties.get("presence_penalty") != null)
       optionsBuilder.presencePenalty(
@@ -63,12 +66,15 @@ public class GrokStrategy extends OpenAiCommonStrategy {
   protected StreamingChatModel buildStreamingClientWithOptions() {
     var optionsBuilder = getStreamingBuilderWithCommonOptions();
 
-    if (this.properties.get("max_tokens") != null)
-      optionsBuilder.maxTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
+    Integer maxTokens = resolveMaxTokens();
+    if (maxTokens != null) {
+      optionsBuilder.maxTokens(maxTokens);
+    }
 
-    if (this.properties.get("frequence_penalty") != null)
-      optionsBuilder.frequencyPenalty(
-          Double.valueOf(this.properties.get("frequence_penalty").toString()));
+    Double frequencyPenalty = resolveFrequencyPenalty();
+    if (frequencyPenalty != null) {
+      optionsBuilder.frequencyPenalty(frequencyPenalty);
+    }
 
     if (this.properties.get("presence_penalty") != null)
       optionsBuilder.presencePenalty(

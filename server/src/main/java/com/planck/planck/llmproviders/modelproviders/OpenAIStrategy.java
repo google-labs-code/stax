@@ -129,7 +129,7 @@ public class OpenAIStrategy extends ChatProviderStrategy {
                   latencyMs.set(System.currentTimeMillis() - startTime);
                   return new RetryUtils.StatusResult<>(response, HttpStatus.SC_OK);
                 } catch (OpenAIException e) {
-                  throw new RuntimeException(e.getMessage());
+                  throw new RuntimeException(e);
                 }
               },
               defaultRetryProperties);
@@ -146,20 +146,31 @@ public class OpenAIStrategy extends ChatProviderStrategy {
     return client;
   }
 
+  private boolean isReasoningModel(String model) {
+    if (model == null) return false;
+    String lower = model.toLowerCase();
+    return lower.startsWith("o1") || lower.startsWith("o3") || lower.startsWith("o4");
+  }
+
   private ResponseCreateParams getParams(List<Prompt> prompts) {
     ResponseCreateParams.Builder paramsBuilder =
         ResponseCreateParams.builder()
             .inputOfResponse(getInputFromMessages(prompts))
             .model(ChatModel.of(modelName));
 
-    if (this.properties.get("max_tokens") != null)
-      paramsBuilder.maxOutputTokens(Long.valueOf(this.properties.get("max_tokens").toString()));
+    Object maxTokens =
+        this.properties.get("max_output_tokens") != null
+            ? this.properties.get("max_output_tokens")
+            : this.properties.get("max_tokens");
+    if (maxTokens != null) paramsBuilder.maxOutputTokens(Long.valueOf(maxTokens.toString()));
 
-    if (this.properties.get("temperature") != null)
-      paramsBuilder.temperature(Double.valueOf(this.properties.get("temperature").toString()));
+    if (!isReasoningModel(modelName)) {
+      if (this.properties.get("temperature") != null)
+        paramsBuilder.temperature(Double.valueOf(this.properties.get("temperature").toString()));
 
-    if (this.properties.get("top_p") != null)
-      paramsBuilder.topP(Double.valueOf(this.properties.get("top_p").toString()));
+      if (this.properties.get("top_p") != null)
+        paramsBuilder.topP(Double.valueOf(this.properties.get("top_p").toString()));
+    }
 
     if (this.properties.get("top_logprobs") != null)
       paramsBuilder.topLogprobs(Long.valueOf(this.properties.get("top_logprobs").toString()));

@@ -37,6 +37,7 @@ import com.planck.planck.util.RetryUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -45,6 +46,7 @@ import reactor.core.publisher.Flux;
 
 @Component("google")
 @Scope("prototype")
+@Slf4j
 public class GoogleStrategy extends ChatProviderStrategy {
   @Autowired private DefaultRetryProperties defaultRetryProperties;
 
@@ -55,16 +57,26 @@ public class GoogleStrategy extends ChatProviderStrategy {
     Content systemInstruction = null;
     List<Content> contents = new ArrayList<>();
     for (Prompt prompt : prompts) {
-      if (prompt.getRole() == InputRole.SYSTEM && prompts.size() > 1) {
-        systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+      if (prompt.getRole() == InputRole.SYSTEM || prompt.getRole() == InputRole.DEVELOPER) {
+        if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+          systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+        }
         continue;
       }
-      contents.add(Content.fromParts(Part.fromText(prompt.getText())));
+      if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+        String role = prompt.getRole() == InputRole.ASSISTANT ? "model" : "user";
+        contents.add(
+            Content.builder().role(role).parts(List.of(Part.fromText(prompt.getText()))).build());
+      }
+    }
+    if (contents.isEmpty()) {
+      contents.add(Content.builder().role("user").parts(List.of(Part.fromText(" "))).build());
     }
 
     GenerateContentConfig config = getGenerationConfig(systemInstruction);
 
-    return getResponseWithRetry(client, model.getName(), contents, config);
+    String targetModel = resolveModelName(model.getName());
+    return getResponseWithRetry(client, targetModel, contents, config);
   }
 
   @Override
@@ -74,18 +86,41 @@ public class GoogleStrategy extends ChatProviderStrategy {
     Content systemInstruction = null;
     List<Content> contents = new ArrayList<>();
     for (Prompt prompt : prompts) {
-      if (prompt.getRole() == InputRole.SYSTEM && prompts.size() > 1) {
-        systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+      if (prompt.getRole() == InputRole.SYSTEM || prompt.getRole() == InputRole.DEVELOPER) {
+        if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+          systemInstruction = Content.fromParts(Part.fromText(prompt.getText()));
+        }
         continue;
       }
-      contents.add(Content.fromParts(Part.fromText(prompt.getText())));
+      if (prompt.getText() != null && !prompt.getText().trim().isEmpty()) {
+        String role = prompt.getRole() == InputRole.ASSISTANT ? "model" : "user";
+        contents.add(
+            Content.builder().role(role).parts(List.of(Part.fromText(prompt.getText()))).build());
+      }
+    }
+    if (contents.isEmpty()) {
+      contents.add(Content.builder().role("user").parts(List.of(Part.fromText(" "))).build());
     }
     GenerateContentConfig config = getGenerationConfig(systemInstruction);
 
     long startTime = System.currentTimeMillis();
     ResponseStream<GenerateContentResponse> streamResponse;
+    String targetModel = resolveModelName(model.getName());
     try {
-      streamResponse = client.models.generateContentStream(model.getName(), contents, config);
+      try {
+        streamResponse = client.models.generateContentStream(targetModel, contents, config);
+      } catch (ApiException e) {
+        if (e.code() == 404) {
+          String fallbackModel = resolveAvailableGeminiModel(client, targetModel);
+          if (!fallbackModel.equals(targetModel)) {
+            streamResponse = client.models.generateContentStream(fallbackModel, contents, config);
+          } else {
+            throw e;
+          }
+        } else {
+          throw e;
+        }
+      }
     } catch (Exception e) {
       throw new LlmProviderException(
           "Error while sending request to Gemini API: " + e.getMessage(), e);
@@ -144,12 +179,28 @@ public class GoogleStrategy extends ChatProviderStrategy {
               () -> {
                 try {
                   long startTime = System.currentTimeMillis();
-                  GenerateContentResponse response =
-                      client.models.generateContent(modelName, contents, config);
+                  GenerateContentResponse response;
+                  try {
+                    response = client.models.generateContent(modelName, contents, config);
+                  } catch (ApiException e) {
+                    if (e.code() == 404) {
+                      String fallbackModel = resolveAvailableGeminiModel(client, modelName);
+                      if (!fallbackModel.equals(modelName)) {
+                        response = client.models.generateContent(fallbackModel, contents, config);
+                      } else {
+                        throw e;
+                      }
+                    } else {
+                      throw e;
+                    }
+                  }
                   latencyMs.set(System.currentTimeMillis() - startTime);
                   return new RetryUtils.StatusResult<>(response, HttpStatus.SC_OK);
                 } catch (ApiException e) {
-                  return new RetryUtils.StatusResult<>(null, e.code());
+                  return new RetryUtils.StatusResult<>(null, e.code(), e.getMessage());
+                } catch (Exception e) {
+                  return new RetryUtils.StatusResult<>(
+                      null, HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                 }
               },
               defaultRetryProperties);
@@ -161,6 +212,84 @@ public class GoogleStrategy extends ChatProviderStrategy {
     return new ChatResponseWithLatency(geminiResponse, latencyMs.longValue());
   }
 
+  private String resolveAvailableGeminiModel(Client client, String requestedModel) {
+    try {
+      List<String> available = new ArrayList<>();
+      for (com.google.genai.types.Model m : client.models.list(null)) {
+        String fullName = m.name().orElse("");
+        if (fullName.startsWith("models/")) {
+          fullName = fullName.substring(7);
+        }
+        if (!fullName.startsWith("gemini-")) {
+          continue;
+        }
+        if (fullName.contains("-tts")
+            || fullName.contains("-image")
+            || fullName.contains("-transcribe")
+            || fullName.contains("-robotics")
+            || fullName.contains("-computer-use")
+            || fullName.contains("-embedding")) {
+          continue;
+        }
+        List<String> actions = m.supportedActions().orElse(List.of());
+        if (actions.isEmpty() || actions.contains("generateContent")) {
+          available.add(fullName);
+        }
+      }
+      log.info(
+          "Gemini API 404 for '{}'. Available text/chat Gemini models for this API key: {}",
+          requestedModel,
+          available);
+      if (available.isEmpty()) {
+        return requestedModel;
+      }
+      if (requestedModel.contains("pro")) {
+        if (available.contains("gemini-pro-latest")) {
+          return "gemini-pro-latest";
+        }
+        for (String candidate : available) {
+          if (candidate.contains("pro")) {
+            log.info("Auto-resolving Gemini pro model '{}' -> '{}'", requestedModel, candidate);
+            return candidate;
+          }
+        }
+      }
+      if (requestedModel.contains("lite")) {
+        if (available.contains("gemini-2.5-flash-lite")) {
+          return "gemini-2.5-flash-lite";
+        }
+        if (available.contains("gemini-flash-lite-latest")) {
+          return "gemini-flash-lite-latest";
+        }
+        for (String candidate : available) {
+          if (candidate.contains("lite")) {
+            return candidate;
+          }
+        }
+      }
+      if (requestedModel.contains("flash")) {
+        if (available.contains("gemini-flash-latest")) {
+          return "gemini-flash-latest";
+        }
+        if (available.contains("gemini-3.5-flash")) {
+          return "gemini-3.5-flash";
+        }
+        for (String candidate : available) {
+          if (candidate.contains("flash") && !candidate.contains("lite")) {
+            log.info("Auto-resolving Gemini flash model '{}' -> '{}'", requestedModel, candidate);
+            return candidate;
+          }
+        }
+      }
+      log.info("Auto-resolving Gemini model '{}' -> '{}'", requestedModel, available.get(0));
+      return available.get(0);
+    } catch (Exception ex) {
+      log.warn(
+          "Failed to list available Gemini models during fallback resolution: {}", ex.getMessage());
+      return requestedModel;
+    }
+  }
+
   private GenerateContentConfig getGenerationConfig(Content systemInstruction) {
     GenerateContentConfig.Builder configBuilder = GenerateContentConfig.builder();
 
@@ -168,48 +297,88 @@ public class GoogleStrategy extends ChatProviderStrategy {
       configBuilder.systemInstruction(systemInstruction);
     }
 
-    if (this.properties.containsKey("temperature")) {
-      configBuilder.temperature(Float.valueOf(this.properties.get("temperature").toString()));
+    if (this.properties != null) {
+      if (this.properties.get("temperature") != null) {
+        configBuilder.temperature(Float.valueOf(this.properties.get("temperature").toString()));
+      }
+
+      if (this.properties.get("top_p") != null) {
+        configBuilder.topP(Float.valueOf(this.properties.get("top_p").toString()));
+      }
+
+      if (this.properties.get("seed") != null) {
+        configBuilder.seed(Integer.valueOf(this.properties.get("seed").toString()));
+      }
+
+      if (this.properties.get("max_tokens") != null) {
+        configBuilder.maxOutputTokens(
+            Integer.valueOf(this.properties.get("max_tokens").toString()));
+      } else if (this.properties.get("max_output_tokens") != null) {
+        configBuilder.maxOutputTokens(
+            Integer.valueOf(this.properties.get("max_output_tokens").toString()));
+      }
+
+      if (this.properties.get("top_k") != null) {
+        configBuilder.topK(Float.valueOf(this.properties.get("top_k").toString()));
+      }
+
+      if (this.properties.get("presence_penalty") != null) {
+        configBuilder.presencePenalty(
+            Float.valueOf(this.properties.get("presence_penalty").toString()));
+      }
+
+      if (this.properties.get("frequency_penalty") != null) {
+        configBuilder.frequencyPenalty(
+            Float.valueOf(this.properties.get("frequency_penalty").toString()));
+      }
+
+      if (this.properties.get("response_log_probs") != null) {
+        configBuilder.responseLogprobs(
+            Boolean.valueOf(this.properties.get("response_log_probs").toString()));
+      }
+
+      if (this.properties.get("log_probs") != null) {
+        configBuilder.logprobs(Integer.valueOf(this.properties.get("log_probs").toString()));
+        configBuilder.responseLogprobs(true);
+      }
     }
 
-    if (this.properties.containsKey("top_p")) {
-      configBuilder.topP(Float.valueOf(this.properties.get("top_p").toString()));
+    String targetModel = resolveModelName(modelName);
+    if (targetModel != null && targetModel.contains("thinking")) {
+      configBuilder.thinkingConfig(ThinkingConfig.builder().includeThoughts(true).build());
     }
-
-    if (this.properties.containsKey("seed")) {
-      configBuilder.seed(Integer.valueOf(this.properties.get("seed").toString()));
-    }
-
-    if (this.properties.containsKey("max_tokens")) {
-      configBuilder.maxOutputTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
-    }
-
-    if (this.properties.containsKey("top_k")) {
-      configBuilder.topK(Float.valueOf(this.properties.get("top_k").toString()));
-    }
-
-    if (this.properties.containsKey("presence_penalty")) {
-      configBuilder.presencePenalty(
-          Float.valueOf(this.properties.get("presence_penalty").toString()));
-    }
-
-    if (this.properties.containsKey("frequency_penalty")) {
-      configBuilder.frequencyPenalty(
-          Float.valueOf(this.properties.get("frequency_penalty").toString()));
-    }
-
-    if (this.properties.containsKey("response_log_probs")) {
-      configBuilder.responseLogprobs(
-          Boolean.valueOf(this.properties.get("response_log_probs").toString()));
-    }
-
-    if (this.properties.containsKey("log_probs")) {
-      configBuilder.logprobs(Integer.valueOf(this.properties.get("log_probs").toString()));
-      configBuilder.responseLogprobs(true);
-    }
-
-    configBuilder.thinkingConfig(ThinkingConfig.builder().includeThoughts(true).build());
     return configBuilder.build();
+  }
+
+  private String resolveModelName(String name) {
+    if (name == null || name.isBlank()) {
+      return "gemini-flash-latest";
+    }
+    if (name.equals("gemini-2.5-flash")) {
+      return "gemini-flash-latest";
+    }
+    if (name.equals("gemini-2.5-pro")) {
+      return "gemini-pro-latest";
+    }
+    if (name.startsWith("gemini-2.0")
+        || name.startsWith("gemini-1.5")
+        || name.equals("gemini-flash")
+        || name.equals("gemini-pro")) {
+      if (name.contains("pro")) {
+        return "gemini-pro-latest";
+      }
+      if (name.contains("lite")) {
+        return "gemini-2.5-flash-lite";
+      }
+      return "gemini-flash-latest";
+    }
+    if (name.startsWith("gemma-3")) {
+      return "gemma-4-31b-it";
+    }
+    if (name.startsWith("learnlm")) {
+      return "gemini-flash-latest";
+    }
+    return name;
   }
 
   private Client buildClient() {

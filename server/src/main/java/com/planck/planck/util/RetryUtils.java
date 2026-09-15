@@ -88,17 +88,26 @@ public class RetryUtils {
 
               context.lastStatusCode = result.statusCode;
               context.errorMessage = result.errorMessage;
-              return CompletableFuture.failedFuture(new RuntimeException());
+              String msg =
+                  result.errorMessage != null && !result.errorMessage.isEmpty()
+                      ? result.errorMessage
+                      : "Request failed with HTTP " + result.statusCode;
+              return CompletableFuture.failedFuture(new RuntimeException(msg));
             })
         .handle(
             (result, throwable) -> {
               if (throwable != null) {
                 if (!shouldRetry(context.lastStatusCode, context.attempt, context.config)) {
-                  String errorMessage = "";
-                  if (context.errorMessage != null) {
+                  String errorMessage;
+                  if (context.errorMessage != null && !context.errorMessage.isEmpty()) {
                     errorMessage = context.errorMessage;
+                  } else if (throwable.getMessage() != null && !throwable.getMessage().isEmpty()) {
+                    errorMessage = throwable.getMessage();
+                  } else if (throwable.getCause() != null
+                      && throwable.getCause().getMessage() != null) {
+                    errorMessage = throwable.getCause().getMessage();
                   } else {
-                    errorMessage += throwable.getMessage();
+                    errorMessage = "Request failed with status " + context.lastStatusCode;
                   }
                   throw new RuntimeException(errorMessage, throwable);
                 }

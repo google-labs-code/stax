@@ -64,16 +64,19 @@ public class IntegrationTestSecurityConfiguration {
         String email = PlanckConstants.DEFAULT_USER;
         String firstName = PlanckConstants.DEFAULT_USER_FIRSTNAME;
         String lastName = PlanckConstants.DEFAULT_USER_LASTNAME;
-        User user =
-            userService
-                .findByEmail(email)
-                .orElseGet(
-                    () -> {
-                      User newUser = new User(firstName, lastName, email, Role.USER);
-                      userService.save(newUser);
-                      humanEvaluatorService.createUserThumbsEvaluator(newUser);
-                      return newUser;
-                    });
+        User user;
+        synchronized (IntegrationTestSecurityConfiguration.class) {
+          user =
+              userService
+                  .findByEmail(email)
+                  .orElseGet(
+                      () -> {
+                        User newUser = new User(firstName, lastName, email, Role.USER);
+                        userService.save(newUser);
+                        humanEvaluatorService.createUserThumbsEvaluator(newUser);
+                        return newUser;
+                      });
+        }
         UsernamePasswordAuthenticationToken auth =
             new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
