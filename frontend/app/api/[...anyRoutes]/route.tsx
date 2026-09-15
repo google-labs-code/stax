@@ -46,7 +46,7 @@ async function handle(request: Request) {
     const config: AxiosRequestConfig = {
       method: request.method.toUpperCase(),
       url: relativeEndpoint,
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080",
       headers,
       timeout: 180000, // 3 minutes timeout
     };
