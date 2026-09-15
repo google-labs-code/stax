@@ -1,4 +1,4 @@
-# EVALUABLE AI
+# Google Stax Server
 
 ## Table of Contents
 
@@ -8,12 +8,12 @@
 - [Running the Application](#running-the-application)
 - [Running Tests](#running-tests)
 - [API Documentation](#api-documentation)
-- [App specifics](/docs/README.MD)
+- [App specifics](docs/README.md)
 - [License](#license)
 
 ## Running the application
 
-You can checkout the instructions on how to directly run the application within a container [here](/docs/LOCAL_SETUP.md)
+You can checkout the instructions on how to directly run the application within a container [here](docs/LOCAL_SETUP.md)
 
 ## Prerequisites for manual setup
 
@@ -106,7 +106,7 @@ This project uses JUnit for testing. To run the tests, you can use the following
    ```
    For example:
    ```
-   mvn test -Dtest=com.planck.planck.service.EvaluableKeysServiceTest
+   mvn test -Dtest=com.planck.planck.domain.workbook.WorkbookServiceTest
    ```
 3. Run a specific test method:
    ```
@@ -114,7 +114,7 @@ This project uses JUnit for testing. To run the tests, you can use the following
    ```
    For example:
    ```
-   mvn test -Dtest=com.planck.planck.service.EvaluableKeysServiceTest#testGenerateNewEvaluableKey_Success
+   mvn test -Dtest=com.planck.planck.domain.workbook.WorkbookServiceTest#testCreateWorkbook_Success
    ```
 4. Run tests with coverage report (using JaCoCo):
    ```
@@ -127,4 +127,4 @@ This project uses JUnit for testing. To run the tests, you can use the following
    ```
 
 ## App specifics
-We are handling Enums and Tagging in a specific way - for more info please check out this [doc](/docs/README.MD)
+We are handling Enums and Tagging in a specific way - for more info please check out this [doc](docs/README.md)
