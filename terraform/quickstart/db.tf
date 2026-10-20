@@ -13,34 +13,12 @@
 # limitations under the License.
 
 # Call the Cloud SQL MySQL module
-module "cloudsql_mysql_instance" {
-
-  source = "../modules/gcp_sql"
-
-  project_id        = data.google_project.default_project.project_id
-  region            = local.region
-  instance_name     = "mysql-db"
-  database_version  = "MYSQL_8_4"
-  cloudsql_edition  = "ENTERPRISE_PLUS"
-  availability_type = "REGIONAL" # Pass the desired availability type
-  database_tier     = "db-perf-optimized-N-2"
-  # disk_size         = 512        # SSD storage to 512 GB
-
-  root_password          = random_password.db_root_password.result
-  database_name          = "stax-db"
-  database_user_name     = "user"
-  database_user_password = random_password.db_user_password.result
-  database_charset       = "utf8mb4"
-  database_collation     = "utf8mb4_0900_ai_ci"
-
-  enable_deletion_protection  = false
-  enable_backup_configuration = true
-  backup_start_time           = "20:55"
-
-  mysql_database_flags = {
-    "general_log"        = "on"
-    "slow_query_log"     = "on"
-    "log_output"         = "FILE"
-    "skip_show_database" = "on"
-  }
+# External MySQL (Aiven free tier). Cloud SQL has no free tier.
+# Password lives in Secret Manager secret "db-password" (set out of band, see secrets.tf).
+variable "db_host" { type = string }
+variable "db_port" {
+  type    = number
+  default = 3306
 }
+variable "db_name" { type = string }
+variable "db_user" { type = string }

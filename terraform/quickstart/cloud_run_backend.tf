@@ -19,14 +19,14 @@ module "cloud_run_backend" {
 
   cloud_run_image             = "${local.region}-docker.pkg.dev/${local.project_id}/${var.artifact_registry_repo}/stax-backend"
   cloud_run_service_name      = "stax-backend"
-  cloud_run_cpu_limit         = 4
-  cloud_run_memory_limit      = "16Gi"
+  cloud_run_cpu_limit         = 1
+  cloud_run_memory_limit      = "2Gi"
   cloud_run_startup_cpu_boost = true
 
   allow_unauthenticated = true
 
-  cloud_run_min_instances            = 1
-  cloud_run_max_instances            = 20
+  cloud_run_min_instances            = 0
+  cloud_run_max_instances            = 2
   cloud_run_max_instance_concurrency = 80
 
   cloud_run_env_vars = [
@@ -45,6 +45,23 @@ module "cloud_run_backend" {
     {
       name  = "TOS_TYPE",
       value = "tt"
+    },
+    # Dev instance: Google SSO off. auth.google.* placeholders must still resolve.
+    {
+      name  = "AUTH_ENABLED",
+      value = "false"
+    },
+    {
+      name  = "GOOGLE_CLIENT_ID",
+      value = "disabled"
+    },
+    {
+      name  = "GOOGLE_CLIENT_SECRET",
+      value = "disabled"
+    },
+    {
+      name  = "FEATURE_GATE_REDIS_ENABLED",
+      value = "false"
     },
     {
       name  = "SYSTEM_USER_FIRST_NAME",
@@ -103,7 +120,7 @@ module "cloud_run_backend" {
     },
     {
       name  = "JDBC_DATABASE_USERNAME",
-      value = module.cloudsql_mysql_instance.database_user_name
+      value = var.db_user
     },
     {
       name = "JDBC_DATABASE_PASSWORD",
@@ -115,24 +132,12 @@ module "cloud_run_backend" {
     {
       name = "JDBC_DATABASE_URL",
       # https://cloud.google.com/sql/docs/mysql/connect-run#java_2
-      value = "jdbc:mysql://${module.cloudsql_mysql_instance.private_ip_address}:3306/${module.cloudsql_mysql_instance.database_name}"
+      value = "jdbc:mysql://${var.db_host}:${var.db_port}/${var.db_name}?sslMode=REQUIRED&serverTimezone=UTC&sessionVariables=sql_require_primary_key=0"
     }
   ]
 
   ingress_type_cloud_run = "INGRESS_TRAFFIC_ALL"
 
-  volumes = [
-    {
-      name = "cloudsql",
-      cloud_sql_instance = {
-        instances = [module.cloudsql_mysql_instance.connection_name]
-      }
-    }
-  ]
-
-  volume_mounts_map = {
-    "cloudsql" = "/cloudsql"
-  }
 
   depends_on = [ google_secret_manager_secret.aes_secret_key, google_secret_manager_secret.token_signing_key, google_secret_manager_secret.tos_token_signing_key ]
 }

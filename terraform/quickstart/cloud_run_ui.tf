@@ -20,12 +20,12 @@ module "ui_service" {
 
   cloud_run_service_name = "stax-ui"
   cloud_run_image        = "${local.region}-docker.pkg.dev/${local.project_id}/${var.artifact_registry_repo}/stax-ui"
-  cloud_run_cpu_limit    = 4
-  cloud_run_memory_limit = "2Gi"
+  cloud_run_cpu_limit    = 1
+  cloud_run_memory_limit = "512Mi"
   allow_unauthenticated  = true
 
-  cloud_run_min_instances            = 1
-  cloud_run_max_instances            = 20
+  cloud_run_min_instances            = 0
+  cloud_run_max_instances            = 2
   cloud_run_max_instance_concurrency = 80
 
   cloud_run_env_vars = [
@@ -40,6 +40,18 @@ module "ui_service" {
     {
       name  = "TSC_COMPILE_ON_ERROR",
       value = "true"
+    },
+    {
+      name  = "NEXT_PUBLIC_API_BASE_URL",
+      value = "https://stax-backend-${data.google_project.default_project.number}.${local.region}.run.app"
+    },
+    {
+      name  = "NEXT_PUBLIC_APP_BASE_URL",
+      value = "https://stax-ui-${data.google_project.default_project.number}.${local.region}.run.app"
+    },
+    {
+      name  = "NEXT_PUBLIC_AUTH_ENABLED",
+      value = "false"
     },
   ]
 }

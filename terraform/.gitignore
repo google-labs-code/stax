@@ -3,3 +3,6 @@
 **/.terraform.**
 *.tfstate
 *.tfstate.*
+
+# Local variable files (project ids, hosts)
+*.tfvars

@@ -28,6 +28,7 @@ resource "google_project_service" "apis" {
     "networksecurity.googleapis.com",
     "policyanalyzer.googleapis.com",
     "privateca.googleapis.com",
+    "pubsub.googleapis.com",
     "run.googleapis.com",
     "secretmanager.googleapis.com",
     "servicenetworking.googleapis.com",

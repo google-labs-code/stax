@@ -13,15 +13,6 @@
 # limitations under the License.
 
 ################################## db_password #################################
-resource "random_password" "db_user_password" {
-  length      = 16
-  min_lower   = 1
-  min_numeric = 1
-  min_upper   = 1
-  min_special = 1
-  # removes % and & which are special characters in uri
-  override_special = "!@#$*()-_=+[]{}<>:?"
-}
 
 resource "google_secret_manager_secret" "db_password" {
   project   = local.project_id
@@ -33,7 +24,7 @@ resource "google_secret_manager_secret" "db_password" {
 
 resource "google_secret_manager_secret_version" "db_password" {
   secret      = google_secret_manager_secret.db_password.id
-  secret_data = random_password.db_user_password.result
+  secret_data = "REPLACE_ME_VIA_GCLOUD" # placeholder; real value added as a new version out of band
 
   lifecycle {
     ignore_changes = all
@@ -46,13 +37,6 @@ resource "google_secret_manager_secret_iam_member" "secretaccess_db_password" {
   member    = "serviceAccount:${local.service_account}"
 }
 ################################ root_password ####################################
-resource "random_password" "db_root_password" {
-  length      = 16
-  min_lower   = 1
-  min_numeric = 1
-  min_upper   = 1
-  min_special = 1
-}
 ######################### Secret for AES_SECRET_KEY ##############################
 resource "random_password" "aes_secret_key" {
   length      = 16
