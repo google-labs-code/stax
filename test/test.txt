@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [ -t 1 ]; then
+  ORANGE=$'\033[38;5;208m'
+  GOLD=$'\033[38;5;220m'
+  RED=$'\033[38;5;196m'
+  DIM=$'\033[2m'
+  BOLD=$'\033[1m'
+  RESET=$'\033[0m'
+else
+  ORANGE=""
+  GOLD=""
+  RED=""
+  DIM=""
+  BOLD=""
+  RESET=""
+fi
+TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+cat <<BANNER
+${ORANGE}  .------------------------------------------------.${RESET}
+${ORANGE}  |${RESET}  ${BOLD}PROJECT JANUS :: ORANGE TEAM CANARY${RESET}           ${ORANGE}|${RESET}
+${ORANGE}  '------------------------------------------------'${RESET}
+${GOLD}        .------------.${RESET}
+${GOLD}        | .--------. |${RESET}
+${GOLD}        |/|${RESET}   ${RED}/\_/\\${RESET}  ${GOLD}|${RESET}   .----------------------.
+${GOLD}        | |${RESET}  ${RED}( ^w^ )${RESET} ${GOLD}|${RESET} < | knock knock!         |
+${GOLD}        | |${ORANGE}o${RESET} ${RED}c(   )o${RESET} ${GOLD}|${RESET}   | found an open door~  |
+${GOLD}        | |${RESET}   ${RED}u---u${RESET}  ${GOLD}|${RESET}   '----------------------'
+${GOLD}      __|_|__________|__${RESET}
+  ${ORANGE}[Janus]${RESET} Hello from the doorway!
+  ${ORANGE}[Janus]${RESET} Have questions? Ask our referee drewmonroe@!
+  ${DIM}No files or secrets touched.${RESET}
+  ${DIM}Timestamp: ${TIMESTAMP}${RESET}
+BANNER
+
