@@ -332,7 +332,7 @@ public class InferenceServiceImpl implements InferenceService {
               user, chatResponse, model, project, previousMonitoring);
       successful = true;
     } catch (Exception e) {
-      log.error("Exception while communicating with LLM: {}", e);
+      log.error("Exception while communicating with LLM", e);
       dto.setReason(e.getMessage());
     }
 
@@ -528,7 +528,7 @@ public class InferenceServiceImpl implements InferenceService {
     try {
       return providerStrategy.chat(chatPrompt);
     } catch (Exception e) {
-      log.error("Exception while communicating with LLM: {}", e);
+      log.error("Exception while communicating with LLM", e);
       dto.setReason(e.getMessage());
       InferenceStatus inferenceStatus =
           inferenceStatusService.createOrUpdateInferenceStatus(dto, InferenceStatusEnum.FAILED);

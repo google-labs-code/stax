@@ -80,13 +80,12 @@ const nextConfig = {
       },
     ];
   },
+  experimental: {
+    proxyTimeout: 300000,
+  },
   async rewrites() {
     const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
     return [
-      {
-        source: "/api/:path*",
-        destination: `${backendUrl}/:path*`,
-      },
       {
         source: "/streaming/:path*",
         destination: `${backendUrl}/streaming/:path*`,

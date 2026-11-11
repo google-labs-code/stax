@@ -94,7 +94,7 @@ export const getModelDetails = (
   }
 };
 
-export const DEFAULT_EVALUATOR_MODEL = "gemini-2.5-flash";
+export const DEFAULT_EVALUATOR_MODEL = "gemini-flash-latest";
 
 export const getProviders = (): ModelProvider[] => [
   {

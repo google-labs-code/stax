@@ -53,15 +53,25 @@ public class MistralStrategy extends ChatProviderStrategy {
 
   @SuppressWarnings("unchecked")
   private MistralAiChatModel buildClientWithOptions() {
-    var optionsBuilder = MistralAiChatModel.builder().apiKey(apiKey).modelName(modelName);
+    String resolvedModel = resolveModelName(modelName);
+    var optionsBuilder = MistralAiChatModel.builder().apiKey(apiKey).modelName(resolvedModel);
 
     optionsBuilder.maxRetries(0);
-    if (this.properties.get("max_tokens") != null)
-      optionsBuilder.maxTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
+    Object maxTokens =
+        this.properties.get("max_output_tokens") != null
+            ? this.properties.get("max_output_tokens")
+            : this.properties.get("max_tokens");
+    if (maxTokens != null) {
+      optionsBuilder.maxTokens(Integer.valueOf(maxTokens.toString()));
+    }
 
-    if (this.properties.get("frequence_penalty") != null)
-      optionsBuilder.frequencyPenalty(
-          Double.valueOf(this.properties.get("frequence_penalty").toString()));
+    Object freqPenalty =
+        this.properties.get("frequency_penalty") != null
+            ? this.properties.get("frequency_penalty")
+            : this.properties.get("frequence_penalty");
+    if (freqPenalty != null) {
+      optionsBuilder.frequencyPenalty(Double.valueOf(freqPenalty.toString()));
+    }
 
     if (this.properties.get("presence_penalty") != null)
       optionsBuilder.presencePenalty(
@@ -86,14 +96,25 @@ public class MistralStrategy extends ChatProviderStrategy {
 
   @SuppressWarnings("unchecked")
   private StreamingChatModel buildStreamingClientWithOptions() {
-    var optionsBuilder = MistralAiStreamingChatModel.builder().apiKey(apiKey).modelName(modelName);
+    String resolvedModel = resolveModelName(modelName);
+    var optionsBuilder =
+        MistralAiStreamingChatModel.builder().apiKey(apiKey).modelName(resolvedModel);
 
-    if (this.properties.get("max_tokens") != null)
-      optionsBuilder.maxTokens(Integer.valueOf(this.properties.get("max_tokens").toString()));
+    Object maxTokens =
+        this.properties.get("max_output_tokens") != null
+            ? this.properties.get("max_output_tokens")
+            : this.properties.get("max_tokens");
+    if (maxTokens != null) {
+      optionsBuilder.maxTokens(Integer.valueOf(maxTokens.toString()));
+    }
 
-    if (this.properties.get("frequence_penalty") != null)
-      optionsBuilder.frequencyPenalty(
-          Double.valueOf(this.properties.get("frequence_penalty").toString()));
+    Object freqPenalty =
+        this.properties.get("frequency_penalty") != null
+            ? this.properties.get("frequency_penalty")
+            : this.properties.get("frequence_penalty");
+    if (freqPenalty != null) {
+      optionsBuilder.frequencyPenalty(Double.valueOf(freqPenalty.toString()));
+    }
 
     if (this.properties.get("presence_penalty") != null)
       optionsBuilder.presencePenalty(
@@ -114,5 +135,22 @@ public class MistralStrategy extends ChatProviderStrategy {
     }
 
     return optionsBuilder.build();
+  }
+
+  private String resolveModelName(String name) {
+    if (name == null || name.isBlank()) {
+      return "mistral-small-latest";
+    }
+    switch (name) {
+      case "mistral-tiny":
+      case "mistral-tiny-2312":
+      case "mistral-small-2312":
+        return "mistral-small-latest";
+      case "mistral-medium-2312":
+      case "mistral-medium":
+        return "mistral-medium-latest";
+      default:
+        return name;
+    }
   }
 }

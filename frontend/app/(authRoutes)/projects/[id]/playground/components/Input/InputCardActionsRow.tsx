@@ -19,6 +19,7 @@ import MaterialIcon from "@/components/MaterialIcon";
 import { MainConfig } from "@/config/config";
 import { PLAYGROUND_CUSTOM_INPUT_NAME } from "@/config/constants";
 import { usePlaygroundContext } from "@/hooks/usePlaygroundContext";
+import { useParams } from "next/navigation";
 import {
   continueChatBSxSQuery,
   inferenceChatCompletionQuery,
@@ -92,6 +93,12 @@ export default function InputCardActionsRow() {
     setIsNewChat,
   } = usePlaygroundContext();
   const { projectState, isSideBySide } = useProjectContext();
+  const params = useParams<{ id: string }>();
+  const activeProjectId =
+    projectState?.projectId ||
+    projectState?.project?.project_id ||
+    (params?.id as string) ||
+    "";
 
   const allCustomInputs = useMemo(() => {
     return inputs
@@ -145,7 +152,7 @@ export default function InputCardActionsRow() {
 
       return inferenceChatCompletionQuery(
         payload,
-        projectState?.project?.project_id || "",
+        activeProjectId,
       );
     },
     onSuccess: (response: ChatCompletionResponse) => {
@@ -208,7 +215,7 @@ export default function InputCardActionsRow() {
       }
 
       await inferenceChatCompletionStreamingConnection(
-        projectState?.project?.project_id || "",
+        activeProjectId,
         {
           payload,
           onStart: () => {
@@ -326,7 +333,7 @@ export default function InputCardActionsRow() {
           model_id_b: models?.[1]?.id || null,
           prompts: [...allCustomInputs],
         },
-        projectState?.project?.project_id || "",
+        activeProjectId,
         pairId || "",
       ),
     onSuccess: (response) => {
@@ -359,7 +366,7 @@ export default function InputCardActionsRow() {
             })),
           variables: variables || {},
         },
-        projectState?.project?.project_id || "",
+        activeProjectId,
       ),
     onSuccess: (response) => {
       onSxSQuerySuccess(response);
@@ -427,6 +434,7 @@ export default function InputCardActionsRow() {
       !firstItem.hidden;
 
     return (
+      !activeProjectId || // Disable generate output when project is not resolved
       generateOutputNoInputsPresent || // Disable generate output when there are no inputs
       generateOutputNoModelsPresent || // Disable generate output when there are missing models
       isChatStartingWithAssistant || // Disable generate output when the chat is starting with an assistant
@@ -434,11 +442,20 @@ export default function InputCardActionsRow() {
       generateOutputEmptyUserInputs || // Disable generate output when there are empty user inputs
       !isPlaygroundModified
     );
-  }, [isSideBySide, models, inputs]);
+  }, [
+    activeProjectId,
+    generateOutputNoInputsPresent,
+    generateOutputNoModelsPresent,
+    generateOutputEmptyUserInputs,
+    isPlaygroundModified,
+    inputs,
+  ]);
 
   const generateOutputTooltip = useMemo(() => {
     let tooltip = "";
-    if (generateOutputNoInputsPresent) {
+    if (!activeProjectId) {
+      tooltip = "Project is still loading or invalid.";
+    } else if (generateOutputNoInputsPresent) {
       tooltip = "There are no inputs to generate an output.";
     } else if (generateOutputNoModelsPresent) {
       tooltip = "There are no selected models to generate an output.";
@@ -450,6 +467,7 @@ export default function InputCardActionsRow() {
 
     return tooltip;
   }, [
+    activeProjectId,
     generateOutputNoInputsPresent,
     generateOutputNoModelsPresent,
     generateOutputEmptyUserInputs,

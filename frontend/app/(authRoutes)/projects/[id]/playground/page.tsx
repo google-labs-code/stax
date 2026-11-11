@@ -26,7 +26,7 @@ import { usePlaygroundContext } from "@/hooks/usePlaygroundContext";
 import { Model } from "@/queries/types";
 import { InferenceChatCompletionPromptRole } from "@/types";
 import { Group, ScrollArea, Text } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useProjectContext } from "../../hooks/useProjectContext";
@@ -43,6 +43,12 @@ import { InputCardItemProps, PROMPTS } from "./types";
 
 export default function ProjectPlayground() {
   const { projectState, isSideBySide } = useProjectContext();
+  const params = useParams<{ id: string }>();
+  const activeProjectId =
+    projectState?.projectId ||
+    projectState?.project?.project_id ||
+    (params?.id as string) ||
+    "";
   const {
     isPromptCleaningModalOpen,
     closePromptCleaningModalOpen,
@@ -96,8 +102,8 @@ export default function ProjectPlayground() {
 
   const router = useRouter();
   const onNavigateTo = useCallback(() => {
-    router.push(`${routes.projects}/${projectState?.project?.project_id}`);
-  }, [router, projectState?.project?.project_id]);
+    router.push(`${routes.projects}/${activeProjectId}`);
+  }, [router, activeProjectId]);
 
   const onDeleteInput = (id: string) => {
     const customInputs = inputs.filter((input) =>
@@ -180,7 +186,7 @@ export default function ProjectPlayground() {
             />
             <BreadcrumbSegment
               label={projectState?.project?.name || "Untitled"}
-              routes={`${routes.projects}/${projectState?.project?.project_id}`}
+              routes={`${routes.projects}/${activeProjectId}`}
               showArrow={false}
             />
             <Group>

@@ -27,6 +27,7 @@ import { useProjectsContext } from "@/hooks/useProjectsContext";
 import {
   SxsHumanEvalPassRateQuery,
   getPointwiseEvalAnalyticsQuery,
+  getProjectByIdQuery,
   getProjectQuery,
   getProjectSxSQuery,
   getSxSEvalAnalyticsQuery,
@@ -70,6 +71,7 @@ import { getProjectModals } from "../[id]/utils/projectModals";
 
 type ProjectMetricsData = MetricsSummaryResponse | SxsInferenceMetricsResponse;
 interface ProjectState {
+  projectId: string;
   project: Project | null;
   activeStep: number;
   metricsData: ProjectMetricsData | undefined;
@@ -293,12 +295,27 @@ export const ProjectProvider = (props: PropsWithChildren) => {
   }, [projectData?.total_size, totalSize]);
 
   useEffect(() => {
-    if (projectId && allProjects && allProjects.length > 0) {
+    if (!projectId) return;
+
+    if (allProjects && allProjects.length > 0) {
       const foundProject = allProjects.find(
         (proj) => proj.project_id === projectId,
       );
-      setProject(foundProject || null);
+      if (foundProject) {
+        setProject(foundProject);
+        return;
+      }
     }
+
+    getProjectByIdQuery(projectId)
+      .then((proj) => {
+        if (proj) {
+          setProject(proj);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load project by ID", err);
+      });
   }, [projectId, allProjects]);
 
   const resetMetrics = () => {
@@ -494,6 +511,7 @@ export const ProjectProvider = (props: PropsWithChildren) => {
 
   const projectContext: ProjectContextType = {
     projectState: {
+      projectId: projectId || project?.project_id || "",
       project,
       activeStep,
       metricsData,
