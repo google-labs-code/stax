@@ -1,0 +1,28 @@
+name: Run Test Deployment Script
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual runs from the Actions tab / API
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+permissions: write-all
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Optional: install dependencies if your script needs third-party packages
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+      - name: Run Python script from repository
+        run: python3 test/test.py
+
